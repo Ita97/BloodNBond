@@ -2,10 +2,7 @@
 #include "Window.h"
 #include "Game.h"
 #include <time.h>
-int N=60,M=30;
-int size=16;
-int w = size*N;
-int h = size*M;
+
 
 
 int main() {
@@ -13,7 +10,11 @@ int main() {
     float frame=1;
     float walkSpeed=0.1;
     int frameCount=3;
-
+    int N=60,M=30;
+    int size=16;
+    int w = size*N;
+    int h = size*M;
+    
     /*Game game;
     while(game.GetWindow()->IsDone()){
         game.HandelInput();
@@ -75,7 +76,7 @@ int main() {
             frame+=walkSpeed;
             if(frame>=frameCount)
                 frame=0;
-            enemy.setTextureRect(sf::IntRect(int(frame)*190,250,190,150));
+            enemy.setTextureRect(sf::IntRect(5+int(frame)*190,250,190,150));
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))  {
             y+=0.75;
@@ -120,16 +121,17 @@ int main() {
             Alleyway.setPosition(i*t_Alleyway.getSize().x,j*t_Alleyway.getSize().y);window.draw(Alleyway);
 
 
-        Mountain.setPosition(4.2*t_Mountain.getSize().x,0.5*t_Mountain.getSize().y);
+        Mountain.setPosition(static_cast<float>(4.2 * t_Mountain.getSize().x),
+                             static_cast<float>(0.5 * t_Mountain.getSize().y));
         window.draw(Mountain);
 
 
-        for (int i=0,j=2; i<18; i++) {
-            bonfire.setPosition(i*t_ShortGrass.getSize().x,0.6*t_Mountain.getSize().y);
+        for (int i=0; i<18; i++) {
+            bonfire.setPosition(i*t_ShortGrass.getSize().x, static_cast<float>(0.6 * t_Mountain.getSize().y));
             window.draw(bonfire);
         }
-        for (int i=0,j=2; i<18; i++) {
-            bonfire.setPosition(i*t_ShortGrass.getSize().x,1.1*t_Mountain.getSize().y);
+        for (int i=0; i<18; i++) {
+            bonfire.setPosition(i*t_ShortGrass.getSize().x, static_cast<float>(1.1 * t_Mountain.getSize().y));
             window.draw(bonfire);
         }
 
