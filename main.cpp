@@ -32,25 +32,19 @@ int main() {
 
     sf::RenderWindow window(sf::VideoMode(w,h), "enemy move!");
     window.setVerticalSyncEnabled(true);
-    sf::Texture enemyTexture;
-    enemyTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/dragon.png");
-    sf::Sprite enemy(enemyTexture);
-    //sf::Vector2u size= enemyTexture.getSize();
-    enemy.setTextureRect(sf::IntRect(190,250,190,150)); //intRect(left, top, width, length)
-    enemy.setPosition(x,y);
+    sf::Texture t_enemy,t_ShortGrass,t_Alleyway,t_Mountain,t_MediumGrass,t_bonfire;
 
-
-
-    sf::Texture t_ShortGrass,t_Alleyway,t_Mountain,t_MediumGrass,t_bonfire;
+    //load images
+    t_enemy.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/dragon.png");
     t_ShortGrass.loadFromFile("/home/ita/CLionProjects/BloodBond/sprite/ShortGrass");
     t_Alleyway.loadFromFile("/home/ita/CLionProjects/BloodBond/sprite/alleyway");
     t_Mountain.loadFromFile("/home/ita/CLionProjects/BloodBond/sprite/mountain1");
     t_MediumGrass.loadFromFile("/home/ita/CLionProjects/BloodBond/sprite/MediumGrass");
     t_bonfire.loadFromFile("/home/ita/CLionProjects/BloodBond/sprite/bonfire");
 
-    sf::Sprite s_ShortGrass(t_ShortGrass),s_Alleyway(t_Alleyway),s_Mountain(t_Mountain),s_MediumGrass(t_MediumGrass),s_bonfire(t_bonfire);
-
-
+    sf::Sprite enemy(t_enemy),ShortGrass(t_ShortGrass),Alleyway(t_Alleyway),Mountain(t_Mountain),MediumGrass(t_MediumGrass),bonfire(t_bonfire);
+    enemy.setTextureRect(sf::IntRect(190,250,190,150)); //intRect(left, top, width, length)
+    enemy.setPosition(x,y);
 
 
     sf::Clock clock;
@@ -59,7 +53,7 @@ int main() {
 
     while(window.isOpen()){
         sf::Event event;
-        float time = clock.getElapsedTime().asSeconds();
+        float time = clock.getElapsedTime().asSeconds(); //time flowing
         clock.restart();
         timer+=time;
 
@@ -98,6 +92,8 @@ int main() {
             enemy.setTextureRect(sf::IntRect(int(frame)*190,620,190,200));
         }
         enemy.setPosition(x,y);
+
+        //bound enemy in the window
         if(x<=0) x=0;
         if(x>=770) x=770;
         if(y<=0) y=0;
@@ -106,41 +102,39 @@ int main() {
 
         //background
         for (int i=0; i<N; i++)
-        for (int j=0; j<M; j++) {
-            s_ShortGrass.setPosition(i*t_ShortGrass.getSize().x,j*t_ShortGrass.getSize().y);
-            window.draw(s_ShortGrass); }
-
-
-
+            for (int j=0; j<M; j++) {
+                ShortGrass.setPosition(i*t_ShortGrass.getSize().x,j*t_ShortGrass.getSize().y);
+                window.draw(ShortGrass);
+            }
 
 
         for (int i=0; i<N; i++)
-            for (int j=0; j<M; j++)
-            { s_MediumGrass.setPosition(i*t_MediumGrass.getSize().x,j*t_MediumGrass.getSize().y);window.draw(s_MediumGrass); }
+            for (int j=0; j<M; j++) {
+                MediumGrass.setPosition(i*t_MediumGrass.getSize().x,j*t_MediumGrass.getSize().y);
+                window.draw(MediumGrass);
+            }
 
 
 
         for (int i=0,j=2; i<N; i++)
-        { s_Alleyway.setPosition(i*t_Alleyway.getSize().x,j*t_Alleyway.getSize().y);window.draw(s_Alleyway); }
+            Alleyway.setPosition(i*t_Alleyway.getSize().x,j*t_Alleyway.getSize().y);window.draw(Alleyway);
 
 
+        Mountain.setPosition(4.2*t_Mountain.getSize().x,0.5*t_Mountain.getSize().y);
+        window.draw(Mountain);
 
-        s_Mountain.setPosition(4.2*t_Mountain.getSize().x,0.5*t_Mountain.getSize().y);
-        window.draw(s_Mountain);
 
-
-        for (int i=0,j=2; i<18; i++)
-        { s_bonfire.setPosition(i*t_ShortGrass.getSize().x,0.6*t_Mountain.getSize().y);
-            window.draw(s_bonfire);}
-        for (int i=0,j=2; i<18; i++)
-        { s_bonfire.setPosition(i*t_ShortGrass.getSize().x,1.1*t_Mountain.getSize().y);
-            window.draw(s_bonfire);}
+        for (int i=0,j=2; i<18; i++) {
+            bonfire.setPosition(i*t_ShortGrass.getSize().x,0.6*t_Mountain.getSize().y);
+            window.draw(bonfire);
+        }
+        for (int i=0,j=2; i<18; i++) {
+            bonfire.setPosition(i*t_ShortGrass.getSize().x,1.1*t_Mountain.getSize().y);
+            window.draw(bonfire);
+        }
 
         window.draw(enemy);
         window.display();
     }
     return 0;
-
-    return 0;
-
 }
