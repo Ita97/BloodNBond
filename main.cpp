@@ -22,11 +22,22 @@ int main() {
     }
     */
     Window window("Enemy move",sf::Vector2u(w,h));
-    sf::RectangleShape rectangle(sf::Vector2f(120, 40));
-    rectangle.setFillColor(sf::Color::Blue);
+    sf::Font msg, old;
+    msg.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
+    old.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/1942.ttf");
+    sf::Text status("Blood&Bond",old);
+    status.setPosition(7,2);
+    status.setFillColor(sf::Color::Black);
+    status.setCharacterSize(25);
+
+    sf::RectangleShape rectangle(sf::Vector2f(180, 40));
+    sf::Color dad;
+    rectangle.setFillColor(sf::Color::Red);
     rectangle.setPosition(1, 1);
-    Enemy dragon(5,x,y, nullptr);
+
+    Enemy dragon(5,x,y, 80, nullptr, EnemyType::dragon);
     Detective jack(10,0,0,nullptr,"jack",10,10);
+
     while (!window.IsDone()){
     window.Update();
 
@@ -41,22 +52,18 @@ int main() {
         timer+=time;
 
         window.BeginDraw();
-        window.Draw(rectangle);
-        /*sf::Texture t_enemy;
-        t_enemy.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/dragon.png");
-        sf::Sprite enemy;
-        enemy.setTexture(t_enemy);
-        enemy.setPosition(x,y);
-        enemy.setTextureRect(sf::IntRect(190,250,190,150));
-        window.Draw(enemy);*/
-        //enemy movement
 
 
-
+    // movement
         dragon.move();
         jack.move();
+
+        window.Draw(rectangle);
+        window.Draw(status);
+
         jack.Render(window);
         dragon.Render(window);
+
         window.EndDraw();
     }
 
