@@ -2,12 +2,22 @@
 #include "Window.h"
 #include "Game.h"
 #include <time.h>
+#include <sstream>
+#include <string>
 
 #include <iostream>
 #include "Medicine.h"
 #include "Character.h"
 #include "Detective.h"
 #include "Enemy.h"
+#include "Weapon.h"
+
+template <typename T>
+std::string toString(T arg){
+    std::stringstream ss;
+    ss << arg;
+    return ss.str();
+}
 
 
 int main() {
@@ -25,19 +35,21 @@ int main() {
     sf::Font msg, old;
     msg.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
     old.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/1942.ttf");
-    sf::Text status("Blood&Bond",old);
+    sf::Text status("Enemy HP:",old,25), hp("",old,20);
+    hp.setPosition(151,7);
     status.setPosition(7,2);
     status.setFillColor(sf::Color::Black);
     status.setCharacterSize(25);
 
-    sf::RectangleShape rectangle(sf::Vector2f(180, 40));
+    sf::RectangleShape rectangle(sf::Vector2f(220, 40));
     sf::Color dad;
     rectangle.setFillColor(sf::Color::Red);
     rectangle.setPosition(1, 1);
-
-    Enemy dragon(5,x,y, 80, nullptr, EnemyType::dragon);
-    Detective jack(10,0,0,nullptr,"jack",10,10);
-
+    Weapon* sword;
+    sword=new Weapon(10,20,weaponType::knife);
+    Enemy dragon(10000,x,y, 80, nullptr, EnemyType::dragon);
+    Detective jack("Jack",10,10,10,0,0,nullptr); //(name, hp, sp, ability x, y, weapon)
+    jack.setWeapon(sword);
     while (!window.IsDone()){
     window.Update();
 
@@ -57,10 +69,11 @@ int main() {
     // movement
         dragon.move();
         jack.move();
-
+        jack.attack(dragon);
         window.Draw(rectangle);
         window.Draw(status);
-
+        hp.setString(toString<int>(dragon.getHp()));
+        window.Draw(hp);
         jack.Render(window);
         dragon.Render(window);
 

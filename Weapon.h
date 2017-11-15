@@ -5,32 +5,25 @@
 #ifndef BLOODBOND_WEAPON_H
 #define BLOODBOND_WEAPON_H
 #include <string>
-enum class  weaponType{ stick, knife, pickAxe, spade, axe, gun, shotGun, rifle };
+enum class  weaponType{ stick, knife, pickAxe, spade, axe, gun, shotGun, rifle, unknown };
 
 class Weapon {
 private:
-    int strenght;
+    int strength;
     int durability;
     weaponType type;
     std::string description;
 
 public:
-    Weapon(int s, int d, weaponType t): strenght(s), durability(d), type(t){};
+    Weapon()=default;
+    Weapon(int s, int d, weaponType t): strength(s), durability(d), type(t){};
 
-    int getStrenght() const {
-        return strenght;
+    int getStrength() const {
+        return strength;
     }
 
-    void setStrenght(int strenght) {
-        Weapon::strenght = strenght;
-    }
-
-    int getDurability() const {
-        return durability;
-    }
-
-    void setDurability(int durability) {
-        Weapon::durability = durability;
+    void setStrength(int strenght) {
+        Weapon::strength = strenght;
     }
 
     const std::string &getDescription() const {

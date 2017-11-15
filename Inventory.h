@@ -18,13 +18,9 @@ private:
     //todo se vuoi aggiungi categoria..
 
 public:
-    explicit Inventory(int size, std:: vector<T> chest={}):
+    explicit Inventory(int size=15, std:: vector<T> chest={}):
             size(size), element(chest){
     }
-    ~Inventory(){
-        std::vector<T>::~vector();
-    }
-
     int getSize() const{
         return size;
     }

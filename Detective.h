@@ -7,22 +7,23 @@
 
 #include <string>
 #include "Character.h"
-
+#include "Enemy.h"
 #include "Inventory.h"
 #include "Medicine.h"
 #include "Window.h"
 #include <SFML/Graphics.hpp>
 
+
 class Detective: virtual public Character {
 public:
-    Detective(int h, int x, int y, Weapon* w, std::string det, int sp, int ap);
+    Detective( const std::string& det,int h, int sp, int ap, int x, int y, Weapon* w);
     Detective(const Detective &original);
     Detective& operator =(const Detective &right);
 
     void move() override;
-    void attack() override;
-
+    void attack(Character& enemy) override;
     void Render(Window& l_window) override;
+
 
     int getSanity() const{
         return sanityPoint;
@@ -46,9 +47,8 @@ private:
     int abilityPoint;
     sf::Sprite detective;
     sf::Texture t_det;
-    float frame=0;
     bool inventoryState;
-    //Inventory* inventory;
+
 
 
 };

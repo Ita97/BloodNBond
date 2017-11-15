@@ -17,7 +17,7 @@ public:
     virtual ~Character(){}
 
     virtual void move()=0;
-    virtual void attack()=0;
+    virtual void attack(Character& enemy)=0;
     virtual void Render(Window& l_window)=0;
     int getHp(){
         return hp;
@@ -43,6 +43,7 @@ public:
     Character& copier(const Character& original);
 protected:
     int hp;
+    float frame;
     float posX, posY;
     Weapon* weapon;
 

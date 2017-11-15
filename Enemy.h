@@ -10,17 +10,28 @@
 #include "Character.h"
 #include "Weapon.h"
 
+enum class EnemyType{zombie, ghost, dragon};
+
+
 class Enemy:virtual public Character{
 public:
-    Enemy(int hp, int x, int y, Weapon* weapon);
+    Enemy(int hp, int x, int y, int stg, Weapon* weapon, EnemyType type);
+    std::string getAbility(){
+        return ability;
+    }
+    int getStrength(){
+        return strength;
+    }
     void move() override;
-    void attack() override;
+    void attack(Character& enemy) override;
     void Render(Window& l_window) override;
 
 private:
+    EnemyType category;
+    std::string ability;
+    int strength;
     sf::Texture t_enemy;
     sf::Sprite enemy;
-    float frame=1;
 };
 
 
