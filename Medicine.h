@@ -4,11 +4,12 @@
 
 #ifndef BLOODBOND_MEDICINE_H
 #define BLOODBOND_MEDICINE_H
-#include "Tools.h"
 
-class Medicine: virtual public Tools{
+
+class Medicine {
 public:
-    explicit Medicine(int hp, int sp=0):Tools(toolType::medicine),healingPoint(hp), sanityPoint(sp){};
+    explicit Medicine(int hp, int sp=0): healingPoint(hp), sanityPoint(sp){};
+
     bool isPsichic(){
         return sanityPoint!=0;
     }
@@ -24,15 +25,19 @@ public:
         Medicine::healingPoint = healingPoint;
     }
 
+    int getSanityPoint() const {
+        return sanityPoint;
+    }
+
+    void setSanityPoint(int sanityPoint) {
+        Medicine::sanityPoint = sanityPoint;
+    }
+
 private:
     int healingPoint;
     int sanityPoint;
 };
-/*
 
-    int useTool() override;
 
-};
 
-*/
 #endif //BLOODBOND_MEDICINE_H

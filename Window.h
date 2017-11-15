@@ -33,7 +33,7 @@ private:
     sf::RenderWindow m_window; //'m' Hungarian notation for 'member'
     sf::Vector2u m_windowSize;
     std::string m_windowTitle;
-    bool m_isDone;
+    bool m_isDone=false;
     bool m_isFullScreen;
 };
 

@@ -7,38 +7,49 @@
 
 #include <string>
 #include "Character.h"
-#include "Tools.h"
+
 #include "Inventory.h"
 #include "Medicine.h"
+#include "Window.h"
 #include <SFML/Graphics.hpp>
 
 class Detective: virtual public Character {
 public:
-    Detective(int h, int x, int y, Weapon* w, std::string det, int sp, int ap);//, Tools* t=nullptr);
-    ~Detective(){
-      //  delete[] weapon;
-      //  delete[] tool;
+    Detective(int h, int x, int y, Weapon* w, std::string det, int sp, int ap);
+    Detective(const Detective &original);
+    Detective& operator =(const Detective &right);
+
+    void move() override;
+    void attack() override;
+
+    void Render(Window& l_window) override;
+
+    int getSanity() const{
+        return sanityPoint;
     }
-
-    virtual void move(int x, int y) override;
-    virtual void attack() override;
-
-    //void use(Tools* t);
-    int getSanity() const;
-    void setSanity(int sp);
-    int getAbilityPoint() const;
-    void setAbilityPoint(int ap);
+    void setSanity(int sp){
+        sanityPoint+=sp;
+    };
+    int getAbilityPoint() const{
+        return abilityPoint;
+    }
+    void setAbilityPoint(int ap){
+        abilityPoint=ap;
+    }
     void openInventory();
     void closeInventory();
+    void use(Medicine medication);
 
 private:
     std::string name;
     int sanityPoint;
     int abilityPoint;
     sf::Sprite detective;
+    sf::Texture t_det;
+    float frame=0;
     bool inventoryState;
     //Inventory* inventory;
-    //Tools* tool;
+
 
 };
 

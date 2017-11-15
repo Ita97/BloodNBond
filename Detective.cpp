@@ -3,59 +3,84 @@
 //
 
 #include "Detective.h"
-#include <SFML/Graphics.hpp>
+
 
 Detective::Detective(int h, int x, int y, Weapon* w, std::string name, int sp, int ap):
         Character(h, x, y, w), name(name), sanityPoint(sp), abilityPoint(ap){
-
-    sf::Texture t_det;
     t_det.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/sprite/first-detective.png"); //todo trova sprite adatto
-    sf::Sprite det(t_det);
-    Detective::detective=det;
-    detective.setTextureRect(sf::IntRect(190,250,190,150));
+    detective.setTexture(t_det);
+    detective.setTextureRect(sf::IntRect(0,0,85,110)); //left, top, width, length
     detective.setPosition(0,0);
 }
 
-void Detective::move(int x, int y) {
+void Detective::move() {
 
-    float frame=1;
-    float walkSpeed=0.12;
-    int frameCount=3;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        x+=2;
+    float walkSpeed=0.015;
+    int frameCount=5;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) { //right
+        if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
+            posX+=0.42;
         frame+=walkSpeed;
         if(frame>=frameCount)
-            frame=0;
-        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*190,445,190,150));
+            frame=1;
+        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*70,103,73,110));
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {//TODO resolve left walk bug
-        x-=2;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {//left
+        if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
+        posX-=0.42;
         frame+=walkSpeed;
         if(frame>=frameCount)
-            frame=0;
-        detective.setTextureRect(sf::IntRect(5+static_cast<int>(frame)*190,250,190,150));
+            frame=1;
+        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*70,309,73,110));
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))  {
-        y+=0.75;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))  { //down
+        if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
+        posY+=0.22;
         frame+=walkSpeed;
         if(frame>=frameCount)
-            frame=0;
-        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*190,0,190,200));
+            frame=1;
+        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*69,0,69,110));
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-        y-=0.75;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){ //up
+        if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
+        posY-=0.22;
         frame+=walkSpeed;
         if(frame>=frameCount)
-            frame=0;
-        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*190,620,190,200));
+            frame=1;
+        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*68,206,68,110));
     }
-    detective.setPosition(x,y);
+    detective.setPosition(posX,posY);
 }
 
 void Detective::attack() {}
 
-/*void Detective::use(Tools *t) {
-    t->useTool();
+Detective::Detective(const Detective& original): Character(original){
+    name=original.name;
+    sanityPoint=original.sanityPoint;
+    abilityPoint= original.abilityPoint;
+}
+
+Detective& Detective::operator =(const Detective &right) {
+    if(this!=&right) {
+        copier(right);
+        name = right.name;
+        sanityPoint = right.sanityPoint;
+        abilityPoint = right.abilityPoint;
+    }
+    return *this;
+}
+void Detective::use(Medicine medication) {
+    if(medication.isPsichic())
+        setSanity(medication.getSanityPoint());
+    else
+        setHp(medication.getHealingPoint());
     }
 
-*/
+
+void Detective::Render(Window &l_window) {
+    l_window.Draw(detective);
+}
