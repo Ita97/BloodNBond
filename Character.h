@@ -14,25 +14,34 @@ public:
     Character(const Character& original);
     explicit Character(int h, int x=0, int y=0, Weapon* w= nullptr):
             hp(h),posX(x),posY(y), weapon(w){}
-    virtual ~Character(){}
+
+    virtual ~Character()= default;
 
     virtual void move()=0;
     virtual void attack(Character& enemy)=0;
-    virtual void Render(Window& l_window)=0;
+
+    void Render(Window& l_window);
+
     int getHp(){
         return hp;
     }
-    void setHp(int value){
+    void heal(int value){
         Character::hp+=value;
     }
 
-    int getPosX(){
-        return posX;
-    }
-    int getPosY(){
-        return posY;
+    void hit(int value){
+        Character::hp-=value;
     }
 
+    float getPosX(){
+        return posX;
+    }
+    float getPosY(){
+        return posY;
+    }
+    sf::Vector2f getPosition(){
+        return sf::Vector2f(posX,posY);
+    }
     Weapon* getWeapon(){
         return weapon;
     }
@@ -41,11 +50,20 @@ public:
     }
     Character& operator =(const Character& right);
     Character& copier(const Character& original);
+
+    sf::Vector2f getCollisionArea(){
+        return collisionArea;
+    }
+    void screenBound();
 protected:
+    sf::Texture texture;
+    sf::Sprite sprite;
+    sf::Vector2f collisionArea;
     int hp;
     float frame;
     float posX, posY;
     Weapon* weapon;
+    int walk;
 
 };
 
