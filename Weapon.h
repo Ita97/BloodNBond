@@ -4,26 +4,32 @@
 
 #ifndef BLOODBOND_WEAPON_H
 #define BLOODBOND_WEAPON_H
+
 #include <string>
-enum class  weaponType{ stick, knife, pickAxe, spade, axe, gun, shotGun, rifle, unknown };
+#include <SFML/System.hpp>
+#include "Window.h"
+
 
 class Weapon {
-private:
+protected:
+    int rate;
     int strength;
-    int durability;
-    weaponType type;
     std::string description;
+    sf::Vector2f range;
 
 public:
-    Weapon()=default;
-    Weapon(int s, int d, weaponType t): strength(s), durability(d), type(t){};
+    explicit Weapon()= default;
+    virtual ~Weapon()= default;
+
+    virtual int use(sf::Vector2f detPosition, sf::Vector2f enemyPosition, sf::Vector2f collisionArea, int direction)=0;
+
+    bool checkCollision(sf::Vector2f target, sf::Vector2f collisionArea,sf::Vector2f focus, sf::Vector2f range=sf::Vector2f(0,0));
 
     int getStrength() const {
         return strength;
     }
-
-    void setStrength(int strenght) {
-        Weapon::strength = strenght;
+    void setStrength(int strength) {
+        Weapon::strength = strength;
     }
 
     const std::string &getDescription() const {
@@ -34,9 +40,9 @@ public:
         Weapon::description = description;
     }
 
-    Weapon* clone() const{
-        return new Weapon(*this);
-    }
+    virtual Weapon* clone()=0;
+
+    virtual void Render(Window &l_window)=0;
 
 };
 

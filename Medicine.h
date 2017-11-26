@@ -5,37 +5,31 @@
 #ifndef BLOODBOND_MEDICINE_H
 #define BLOODBOND_MEDICINE_H
 
+enum class medType{hp,sp};
 
 class Medicine {
 public:
-    explicit Medicine(int hp, int sp=0): healingPoint(hp), sanityPoint(sp){};
+    explicit Medicine(int value, medType type);
 
     bool isPsichic(){
-        return sanityPoint!=0;
+        return type == medType::sp;
     }
     bool isPhisical(){
-        return healingPoint!=0;
+        return type == medType::hp;
     }
 
-    int getHealingPoint() const {
-        return healingPoint;
-    }
-
-    void setHealingPoint(int healingPoint) {
-        Medicine::healingPoint = healingPoint;
+    int getHP() const {
+        return healtPoint;
     }
 
     int getSanityPoint() const {
         return sanityPoint;
     }
 
-    void setSanityPoint(int sanityPoint) {
-        Medicine::sanityPoint = sanityPoint;
-    }
-
 private:
-    int healingPoint;
+    int healtPoint;
     int sanityPoint;
+    medType type;
 };
 
 

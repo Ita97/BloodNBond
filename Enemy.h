@@ -24,14 +24,11 @@ public:
     }
     void move() override;
     void attack(Character& enemy) override;
-    void Render(Window& l_window) override;
 
 private:
     EnemyType category;
     std::string ability;
     int strength;
-    sf::Texture t_enemy;
-    sf::Sprite enemy;
 };
 
 

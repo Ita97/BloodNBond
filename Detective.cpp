@@ -6,77 +6,88 @@
 #include "Detective.h"
 
 
+
 Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y, Weapon* w):
         name(name), Character(h, x, y, w), sanityPoint(sp), abilityPoint(ap){
-    t_det.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/sprite/first-detective.png");
-    detective.setTexture(t_det);
-    detective.setTextureRect(sf::IntRect(0,0,85,110)); //left, top, width, length
-    detective.setPosition(0,0);
+    texture.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/sprite/first-detective.png");
+    sprite.setTexture(texture);
+    sprite.setTextureRect(sf::IntRect(0,0,73,110)); //left, top, width, length
+    sprite.setOrigin(73/2,110/2);
+    sprite.setPosition(x,y);
     frame=0;
+    walk=0;
+    collisionArea=sf::Vector2f(40,110/3);
 }
+
 
 void Detective::move() {
 
     float walkSpeed=0.015;
     int frameCount=5;
-    float x=0.72, y=0.42;
-
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) { //right
-        if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
-            posX+=x;
-        frame+=walkSpeed;
-        if(frame>=frameCount)
-            frame=1;
-        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*69,103,73,110));
-    }
-
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {//left
-        if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
-            posX-=x;
-        frame+=walkSpeed;
-        if(frame>=frameCount)
-            frame=1;
-        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*69,309,73,110));
-    }
+    float speedX=0.72, speedY=0.42;
+    int x=69, y=103, w=73, l=110;
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))  { //down
+        walk=0;
         if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
-            posY+=y;
+            posY+=speedY;
         frame+=walkSpeed;
         if(frame>=frameCount)
             frame=1;
-        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*69,0,69,110));
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(frame)*x,walk*y,w,l));
     }
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){ //up
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) { //right
+        walk=1;
         if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
-            posY-=y;
+            posX+=speedX;
         frame+=walkSpeed;
         if(frame>=frameCount)
             frame=1;
-        detective.setTextureRect(sf::IntRect(static_cast<int>(frame)*68,206,68,110));
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(frame)*x,walk*y,w,l));
     }
-    detective.setPosition(posX,posY);
+
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){ //up
+        walk=2;
+        if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
+            posY-=speedY;
+        frame+=walkSpeed;
+        if(frame>=frameCount)
+            frame=1;
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(frame)*x,walk*y,w,l));
+    }
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {//left
+        walk=3;
+        if(static_cast<int>(frame)==1 || static_cast<int>(frame)==3)
+            posX-=speedX;
+        frame+=walkSpeed;
+        if(frame>=frameCount)
+            frame=1;
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(frame)*x,walk*y,w,l));
+    }
+
+    else
+        sprite.setTextureRect(sf::IntRect(0,walk*y,w,l));
+    sprite.setPosition(posX,posY);
 
     //bound
-    if(posX<=-20) posX=-20;
-    if(posX>=900) posX=900;
-    if(posY<=-20) posY=-20;
-    if(posY>=380) posY=380;
+    screenBound();
 }
 
 void Detective::attack(Character& enemy) {
-    int damage=1;
+    int damage=0;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-        if ((posX < enemy.getPosX())&&(enemy.getPosX() - posX < 50) || (posX>enemy.getPosX())&& (posX - enemy.getPosX() < 100)){
-            if((posY>=enemy.getPosY())&&(posY - enemy.getPosY() < 100) || (posY<enemy.getPosY())&&(enemy.getPosY() - posY < 30)){
-            if (weapon != nullptr)
-                damage = weapon->getStrength();
-            enemy.setHp(-damage);
-            }
+
+        if (weapon != nullptr) {
+            damage=weapon->use(getPosition(), enemy.getPosition(), enemy.getCollisionArea(), walk);
         }
-        else
-                std::cout<<"Dodge"<<std::endl;
+
+        else if(weapon->checkCollision(enemy.getPosition(), enemy.getCollisionArea(), getPosition(),collisionArea))
+            damage=1;
+
+        enemy.hit(damage);
+
+
     }
 }
 
@@ -95,14 +106,11 @@ Detective& Detective::operator =(const Detective &right) {
     }
     return *this;
 }
-void Detective::use(Medicine medication) {
+
+void Detective::useMedicine(Medicine medication) {
     if(medication.isPsichic())
         setSanity(medication.getSanityPoint());
     else
-        setHp(medication.getHealingPoint());
+        heal(medication.getHP());
     }
 
-
-void Detective::Render(Window &l_window) {
-    l_window.Draw(detective);
-}

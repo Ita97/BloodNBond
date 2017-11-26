@@ -5,13 +5,18 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include "Enemy.h"
-#include "Window.h"
+
+
+
 Enemy::Enemy(int hp, int x, int y, int stg, Weapon *weapon, EnemyType type): Character(hp, x, y, weapon), strength(stg), category(type){
     switch(category) {
         case (EnemyType::dragon):
-            t_enemy.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/dragon.png");
-            enemy.setTextureRect(sf::IntRect(190, 200, 190, 200));//intRect(left, top, width, length)
+            texture.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/sprite/dragon.png");
+            sprite.setTextureRect(sf::IntRect(190, 200, 190, 200));//intRect(left, top, width, length)
+            sprite.setOrigin(190/2,200/2);
             frame = 1;
+            walk=1;
+            collisionArea=sf::Vector2f(190/2,200/3);
             break;
 
         case (EnemyType::ghost):
@@ -19,68 +24,31 @@ Enemy::Enemy(int hp, int x, int y, int stg, Weapon *weapon, EnemyType type): Cha
         case(EnemyType::zombie):
             break;//TODO complete
     }
-        enemy.setTexture(t_enemy);
-        enemy.setPosition(x, y);
+    sprite.setTexture(texture);
+    sprite.setPosition(x, y);
 
 
 }
 
 void Enemy::move() {
-    float walkSpeed;
-    int frameCount;
+    float walkSpeed=0;
+    int frameCount=0;
+    int x=0,y=0,w=0,l=0;
+    float speedX=0,speedY=0;
+
     switch(category) {
         case (EnemyType::dragon):
-
+            speedX=0.6;
+            speedY=0.35;
+            x=190;
+            y=200;
+            w=190;
+            l=200;
             walkSpeed = 0.011;
             frameCount = 3;
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                if (static_cast<int>(frame) != 1)
-                    posX += 0.6;
-                frame += walkSpeed;
-                if (frame >= frameCount)
-                    frame = 0;
-                enemy.setTextureRect(sf::IntRect(static_cast<int>(frame) * 190, 390, 190, 200));
-            }
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                int l_frame;
-                if (static_cast<int>(frame) != 1)
-                    posX -= 0.6;
-                frame += walkSpeed;
-                if (frame >= 3)
-                    frame = 0;
-                if (static_cast<int>(frame) == 0) l_frame = 2;
-                if (static_cast<int>(frame) == 1) l_frame = 1;
-                if (static_cast<int>(frame) == 2) l_frame = 0;
-
-                enemy.setTextureRect(sf::IntRect(l_frame * 190, 200, 190, 200));
-
-            }
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                if (static_cast<int>(frame) != 1)
-                    posY += 0.35;
-                frame += walkSpeed;
-                if (frame >= frameCount)
-                    frame = 0;
-                enemy.setTextureRect(sf::IntRect(static_cast<int>(frame) * 190, 0, 190, 200));
-            }
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-                if (static_cast<int>(frame) != 1)
-                    posY -= 0.35;
-                frame += walkSpeed;
-                if (frame >= frameCount)
-                    frame = 0;
-                enemy.setTextureRect(sf::IntRect(static_cast<int>(frame) * 190, 570, 190, 250));
-            }
-
             //bound enemy in the window
-            if (posX <= 0) posX = 0;
-            if (posX >= 770) posX = 770;
-            if (posY <= -50) posY = -50;
-            if (posY >= 295) posY = 295;
+            screenBound();
             break;
 
         case(EnemyType::zombie):
@@ -89,11 +57,58 @@ void Enemy::move() {
         case(EnemyType::ghost):
             break; //TODO complete
     }
-    enemy.setPosition(posX,posY);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        walk=2;
+        if (static_cast<int>(frame) != 1)
+            posX += speedX;
+        frame += walkSpeed;
+        if (frame >= frameCount)
+            frame = 0;
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * x, walk*y, w, l));//390
+    }
+
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        walk=1;
+        int l_frame=0;
+        if (static_cast<int>(frame) != 1)
+            posX -= speedX;
+        frame += walkSpeed;
+        if (frame >= 3)
+            frame = 0;
+        if (static_cast<int>(frame) == 0) l_frame = 2;
+        if (static_cast<int>(frame) == 1) l_frame = 1;
+        if (static_cast<int>(frame) == 2) l_frame = 0;
+
+        sprite.setTextureRect(sf::IntRect(l_frame * x, walk*y, w, l));//200
+
+    }
+
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+        walk=0;
+        if (static_cast<int>(frame) != 1)
+            posY += speedY;
+        frame += walkSpeed;
+        if (frame >= frameCount)
+            frame = 0;
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * x, walk*y, w, l));
+    }
+
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+        walk=3;
+        if (static_cast<int>(frame) != 1)
+            posY -= speedY;
+        frame += walkSpeed;
+        if (frame >= frameCount)
+            frame = 0;
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * x, walk*y, w, l));//570
+    }
+    else
+        sprite.setTextureRect(sf::IntRect(x,walk*y,w,l));
+
+    sprite.setPosition(posX,posY);
 }
 
-void Enemy::Render(Window &l_window) {
-    l_window.Draw(enemy);
-}
 
 void Enemy::attack(Character& enemy){}
+
+

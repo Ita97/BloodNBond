@@ -1,7 +1,8 @@
+
 #include <SFML/Graphics.hpp>
 #include "Window.h"
 #include "Game.h"
-#include <time.h>
+#include <ctime>
 #include <sstream>
 #include <string>
 
@@ -11,6 +12,8 @@
 #include "Detective.h"
 #include "Enemy.h"
 #include "Weapon.h"
+#include "ColdWeapon.h"
+#include "FireWeapon.h"
 
 template <typename T>
 std::string toString(T arg){
@@ -20,8 +23,9 @@ std::string toString(T arg){
 }
 
 
+
 int main() {
-    int x = 785, y = 105;
+    int x = 880, y = 205;
     unsigned int w =960 ;
     unsigned int h =480;
     /*Game game;
@@ -42,14 +46,13 @@ int main() {
     status.setCharacterSize(25);
 
     sf::RectangleShape rectangle(sf::Vector2f(220, 40));
-    sf::Color dad;
     rectangle.setFillColor(sf::Color::Red);
     rectangle.setPosition(1, 1);
-    Weapon* sword;
-    sword=new Weapon(10,20,weaponType::knife);
+    Weapon* magnum;
+    magnum=new ColdWeapon(coldWeaponType::axe);
     Enemy dragon(10000,x,y, 80, nullptr, EnemyType::dragon);
-    Detective jack("Jack",10,10,10,0,0,nullptr); //(name, hp, sp, ability x, y, weapon)
-    jack.setWeapon(sword);
+    Detective jack("Jack",10,10,10,480,240,magnum); //(name, hp, sp, ability, x, y, weapon)
+
     while (!window.IsDone()){
     window.Update();
 
@@ -65,7 +68,6 @@ int main() {
 
         window.BeginDraw();
 
-
     // movement
         dragon.move();
         jack.move();
@@ -74,19 +76,18 @@ int main() {
         window.Draw(status);
         hp.setString(toString<int>(dragon.getHp()));
         window.Draw(hp);
-        jack.Render(window);
-        dragon.Render(window);
+       // magnum->Render(window);
+        if(jack.getPosY()<dragon.getPosY()){
+            jack.Render(window);
+            dragon.Render(window);
+        } else {
+            dragon.Render(window);
+            jack.Render(window);
+        }
 
         window.EndDraw();
     }
 
-
-
-    Medicine aspirin(0,5);
-    if(aspirin.isPsichic())
-        std::cout<<"Aspirin is a psichic medicinal"<<std::endl;
-    jack.use(aspirin);
-    std::cout<<jack.getSanity()<<std::endl;
     return 0;
 }
 /*sf::RenderWindow window(sf::VideoMode(w,h), "enemy move!");

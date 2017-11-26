@@ -22,7 +22,6 @@ public:
 
     void move() override;
     void attack(Character& enemy) override;
-    void Render(Window& l_window) override;
 
 
     int getSanity() const{
@@ -39,14 +38,13 @@ public:
     }
     void openInventory();
     void closeInventory();
-    void use(Medicine medication);
+    void useMedicine(Medicine medication);
+
 
 private:
     std::string name;
     int sanityPoint;
     int abilityPoint;
-    sf::Sprite detective;
-    sf::Texture t_det;
     bool inventoryState;
 
 
