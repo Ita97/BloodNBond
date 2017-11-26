@@ -22,7 +22,6 @@ private:
 
 public:
     explicit FireWeapon(fireWeaponType t);
-    ~FireWeapon(){}
     int use(sf::Vector2f detPosition, sf::Vector2f enemyPosition, sf::Vector2f collisionArea, int direction) override;
     FireWeapon* clone() override;
     void reloadCartridge(sf::Vector2f bulletSize, int ammo);
