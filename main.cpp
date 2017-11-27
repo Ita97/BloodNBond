@@ -16,7 +16,7 @@
 #include "FireWeapon.h"
 
 template <typename T>
-std::string toString(T arg){
+std::string toString(T arg){//trasforma numeri in stringhe
     std::stringstream ss;
     ss << arg;
     return ss.str();
@@ -48,35 +48,43 @@ int main() {
     sf::RectangleShape rectangle(sf::Vector2f(220, 40));
     rectangle.setFillColor(sf::Color::Red);
     rectangle.setPosition(1, 1);
-    Weapon* magnum;
-    magnum=new ColdWeapon(coldWeaponType::axe);
+    FireWeapon* magnum;
+    magnum=new FireWeapon(fireWeaponType::gun);
     Enemy dragon(10000,x,y, 80, nullptr, EnemyType::dragon);
-    Detective jack("Jack",10,10,10,480,240,magnum); //(name, hp, sp, ability, x, y, weapon)
+    Detective jack("Jack",10,10,10,480,240, magnum); //(name, hp, sp, ability, x, y, weapon)
 
     while (!window.IsDone()){
     window.Update();
 
 
-    sf::Clock clock;
-    float timer=0;
+       sf::Clock clock;
+        sf::Time time;
+        time = clock.getElapsedTime();
+        time=clock.restart();
+        float second=time.asSeconds();
+        sf::Int32 millisecond=time.asMilliseconds();
+        sf::Int64 microsecond=time.asMicroseconds();
 
 
 
-        float time = clock.getElapsedTime().asSeconds(); //time flowing
-        clock.restart();
-        timer+=time;
+         //time flowing
+
+
+
 
         window.BeginDraw();
-
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+            magnum->reloadCartridge(sf::Vector2f(5,50),300);
     // movement
         dragon.move();
         jack.move();
         jack.attack(dragon);
+        magnum->Render(window);
         window.Draw(rectangle);
         window.Draw(status);
         hp.setString(toString<int>(dragon.getHp()));
         window.Draw(hp);
-       // magnum->Render(window);
+
         if(jack.getPosY()<dragon.getPosY()){
             jack.Render(window);
             dragon.Render(window);
@@ -90,6 +98,12 @@ int main() {
 
     return 0;
 }
+
+
+
+
+
+
 /*sf::RenderWindow window(sf::VideoMode(w,h), "enemy move!");
     window.setVerticalSyncEnabled(true);
 

@@ -16,7 +16,7 @@ Enemy::Enemy(int hp, int x, int y, int stg, Weapon *weapon, EnemyType type): Cha
             sprite.setOrigin(190/2,200/2);
             frame = 1;
             walk=1;
-            collisionArea=sf::Vector2f(190/2,200/3);
+            collisionArea=sf::Vector2f(190/2,200/4);
             break;
 
         case (EnemyType::ghost):

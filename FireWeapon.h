@@ -17,7 +17,8 @@ class FireWeapon: virtual public Weapon {
 
 private:
     int ammoMax; //munizioni
-    std::vector<Bullet> cartridge; //caricatore
+    int cartridge;
+    Bullet bullet;
     fireWeaponType f_type;
 
 public:

@@ -13,11 +13,15 @@ class Bullet {
 private:
     sf::RectangleShape  bullet;
 public:
-    explicit Bullet(sf::Vector2f size);
-    void fire(int speed, int direction, sf::Vector2f range);
+    explicit Bullet();
+    void fire(int speed, int direction);
 
     sf::Vector2f getPosition(){
         return bullet.getPosition();
+    }
+    void setSize(sf::Vector2f size){
+        bullet.setSize(size);
+        bullet.setOrigin(size.x/2,size.y/2);
     }
     void setPosition(sf::Vector2f position){
         bullet.setPosition(position);

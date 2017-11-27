@@ -4,26 +4,25 @@
 
 #include "Bullet.h"
 
-Bullet::Bullet(sf::Vector2f size) {
-    sf::Color bulletColor(117,102,63); //bronzo
-    bullet.setSize(size);
-    bullet.setFillColor(bulletColor);
-    bullet.setOrigin(size.x/2,size.y/2);
+Bullet::Bullet() {
+    sf::Color bronze(117,102,63); //bronze color
+    bullet.setFillColor(bronze);
+
 }
 
-void Bullet::fire(int speed, int direction, sf::Vector2f range){
+void Bullet::fire(int speed, int direction){
         switch(direction) {
             case 0: //down
-                bullet.move(speed/2,0);
+                bullet.move(0,speed/2);
                 break;
             case 1: //right
-                bullet.move(0,speed);
+                bullet.move(speed,0);
                 break;
             case 2: //up
-                bullet.move(-speed/2,0);
+                bullet.move(0,-speed/2);
                 break;
             case 3: //left
-                bullet.move(0,-speed);
+                bullet.move(-speed,0);
                 break;
         }
 

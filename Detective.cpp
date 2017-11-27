@@ -76,8 +76,8 @@ void Detective::move() {
 
 void Detective::attack(Character& enemy) {
     int damage=0;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
 
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
         if (weapon != nullptr) {
             damage=weapon->use(getPosition(), enemy.getPosition(), enemy.getCollisionArea(), walk);
         }
