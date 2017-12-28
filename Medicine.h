@@ -5,6 +5,7 @@
 #ifndef BLOODBOND_MEDICINE_H
 #define BLOODBOND_MEDICINE_H
 
+#include <string>
 enum class medType{hp,sp};
 
 class Medicine {
@@ -17,7 +18,9 @@ public:
     bool isPhisical(){
         return type == medType::hp;
     }
-
+    std::string getName(){
+        return name;
+    }
     int getHP() const {
         return healtPoint;
     }
@@ -27,6 +30,7 @@ public:
     }
 
 private:
+    std::string name;
     int healtPoint;
     int sanityPoint;
     medType type;

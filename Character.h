@@ -20,7 +20,7 @@ public:
     virtual void move()=0;
     virtual void attack(Character& enemy)=0;
 
-    void Render(Window& l_window);
+    virtual void Render(Window& l_window)=0;
 
     int getHp(){
         return hp;

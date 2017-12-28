@@ -33,6 +33,3 @@ Character::Character(const Character &original) {
     copier(original);
 }
 
-void Character::Render(Window &l_window) {
-    l_window.Draw(sprite);
-}

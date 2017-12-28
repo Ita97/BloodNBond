@@ -14,11 +14,14 @@ private:
     sf::RectangleShape  bullet;
 public:
     explicit Bullet();
-    void fire(int speed, int direction);
-
+    void fire(float speed, int direction);
     sf::Vector2f getPosition(){
         return bullet.getPosition();
     }
+    sf::Vector2f getSize(){
+        return bullet.getSize();
+    }
+
     void setSize(sf::Vector2f size){
         bullet.setSize(size);
         bullet.setOrigin(size.x/2,size.y/2);
@@ -27,6 +30,8 @@ public:
         bullet.setPosition(position);
     }
     void Render(Window& l_window);
+
+
 };
 
 

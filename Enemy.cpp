@@ -112,3 +112,6 @@ void Enemy::move() {
 void Enemy::attack(Character& enemy){}
 
 
+void Enemy::Render(Window &l_window) {
+    l_window.Draw(sprite);
+}

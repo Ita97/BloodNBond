@@ -17,6 +17,7 @@ Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y
     frame=0;
     walk=0;
     collisionArea=sf::Vector2f(40,110/3);
+
 }
 
 
@@ -24,8 +25,9 @@ void Detective::move() {
 
     float walkSpeed=0.015;
     int frameCount=5;
-    float speedX=0.72, speedY=0.42;
+    float speedX=0.62, speedY=0.32;
     int x=69, y=103, w=73, l=110;
+
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))  { //down
         walk=0;
@@ -76,19 +78,13 @@ void Detective::move() {
 
 void Detective::attack(Character& enemy) {
     int damage=0;
-
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
         if (weapon != nullptr) {
-            damage=weapon->use(getPosition(), enemy.getPosition(), enemy.getCollisionArea(), walk);
-        }
-
-        else if(weapon->checkCollision(enemy.getPosition(), enemy.getCollisionArea(), getPosition(),collisionArea))
-            damage=1;
+            damage = weapon->use(getPosition(), enemy.getPosition(), enemy.getCollisionArea(), walk);
+        } else if (weapon->checkCollision(enemy.getPosition(), enemy.getCollisionArea(), getPosition(), collisionArea))
+            damage = 1;
 
         enemy.hit(damage);
 
-
-    }
 }
 
 Detective::Detective(const Detective& original): Character(original){
@@ -114,3 +110,9 @@ void Detective::useMedicine(Medicine medication) {
         heal(medication.getHP());
     }
 
+void Detective::Render(Window& l_window){
+    l_window.Draw(sprite);
+    weapon->Render(l_window);
+    if(inventoryState)
+        medikit.Render(l_window);
+}

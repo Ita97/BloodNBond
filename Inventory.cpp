@@ -5,21 +5,21 @@
 #include "Inventory.h"
 
 template <typename T>
-bool Inventory<T>::getElement(T el){
-    if (element.size()>this->size)
+bool Inventory<T>::getElement(T& el){
+    if (elements.size()>=this->size)
         return false;
-    element.push_back(el);
+    elements.push_back(el);
     return true;
 }
 
 template <typename T>
 bool Inventory<T>::trowElement(T el) {
-    if(element.empty())
+    if(elements.empty())
         return false;
 
-    for (auto it = element.begin(); it !=element.end(); it++) {
-        if (el == element[it]){
-            element.erase(it);
+    for (auto it = elements.begin(); it !=elements.end(); it++) {
+        if (el == elements[it]){
+            elements.erase(it);
             return true;
         }
     }
@@ -28,23 +28,49 @@ bool Inventory<T>::trowElement(T el) {
 }
 template <typename T>
 void Inventory<T>::openWindow() {
-    std::string elementName=0;
+
+    std::string elementName="";
     int firstLine=0;
-    inventoryWindow.setSize(sf::Vector2f(100,70));
-    inventoryWindow.setPosition(0,0);
-    inventoryWindow.setFillColor(sf::Color(211,211,211,120)); //silver color
-    inventoryWindow.setOutlineThickness(5);
-    inventoryWindow.setOutlineColor(sf::Color::Black);
+    long int limit=9;
+
+    if(elements.size()<limit)
+        limit=elements.size();
+
+    inventoryWindow=new sf::RectangleShape;
+    inventoryWindow->setSize(sf::Vector2f(100,70));
+    inventoryWindow->setPosition(0,0);
+    inventoryWindow->setFillColor(sf::Color(211,211,211,120)); //silver color
+    inventoryWindow->setOutlineThickness(5);
+    inventoryWindow->setOutlineColor(sf::Color::Black);
+
+    text= new sf::Text;
+    text->setFont(invFont);
+    text->setPosition(inventoryWindow->getPosition().x+10,inventoryWindow->getPosition().y+5);
+    text->setFillColor(sf::Color::Black);
+    text->setCharacterSize(10);
+
     isOpen=true;
 
-    if(sf::Mouse::getPosition().x>inventoryWindow.getOrigin().x&& sf::Mouse::getPosition().x<inventoryWindow.getSize().x+inventoryWindow.getOrigin().x)
+    /*if(sf::Mouse::getPosition().x>inventoryWindow.getOrigin().x&& sf::Mouse::getPosition().x<inventoryWindow.getSize().x+inventoryWindow.getOrigin().x)
         if (sf::Mouse::getPosition().y>inventoryWindow.getOrigin().y&& sf::Mouse::getPosition().y<inventoryWindow.getSize().y+inventoryWindow.getOrigin().y)
-            firstLine=firstLine+rollCounter;
+            firstLine=firstLine+rollCounter;*/ //todo observer
 
-    for(int i=firstLine;i<9+firstLine;i++){
-        elementName=elementName+element[i].getName()+"/n";//todo finish: find a way to insert a string in stl
+    for(int i=firstLine;i<limit+firstLine;i++){
+        elementName=elementName+"-"+elements[i].getName()+"/n";//todo finish: find a way to insert a string in stl
     }
 
-    text.setString(elementName);
-    elementName=0;
+    text->setString(elementName);
+}
+
+template <typename T>
+void Inventory<T>::closeWindow() {
+    delete inventoryWindow;
+    delete text;
+    isOpen=false;
+}
+
+template <typename T>
+void Inventory<T>::Render(Window &l_window) {
+    l_window.Draw(*inventoryWindow);
+    l_window.Draw(*text);
 }

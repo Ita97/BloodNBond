@@ -24,6 +24,7 @@ public:
     }
     void move() override;
     void attack(Character& enemy) override;
+    void Render(Window& l_window) override;
 
 private:
     EnemyType category;

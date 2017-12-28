@@ -36,16 +36,29 @@ public:
     void setAbilityPoint(int ap){
         abilityPoint=ap;
     }
-    void openInventory();
-    void closeInventory();
+    void getMedicine(Medicine &med) {
+        bool isNotFull;
+        isNotFull=medikit.getElement(med);
+        if(!isNotFull)
+            std::cout<<"Non puoi portarla con te";
+    }
+    void openMedikit(){
+        medikit.openWindow();
+        inventoryState=true;
+    }
+    void closeMedikit(){
+        medikit.closeWindow();
+        inventoryState=false;
+    }
     void useMedicine(Medicine medication);
-
-
+    void Render(Window& l_window) override;
 private:
     std::string name;
     int sanityPoint;
     int abilityPoint;
     bool inventoryState;
+    Inventory<Medicine> medikit;
+
 
 
 

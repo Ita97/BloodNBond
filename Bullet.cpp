@@ -5,29 +5,35 @@
 #include "Bullet.h"
 
 Bullet::Bullet() {
-    sf::Color bronze(117,102,63); //bronze color
-    bullet.setFillColor(bronze);
+    bullet.setFillColor(sf::Color(117,102,63,100)); //bronze color
 
 }
 
-void Bullet::fire(int speed, int direction){
+void Bullet::fire(float speed, int direction) {
+
         switch(direction) {
             case 0: //down
-                bullet.move(0,speed/2);
+                bullet.setRotation(90);
+                bullet.move(0, speed / 2);
                 break;
             case 1: //right
-                bullet.move(speed,0);
+                bullet.setRotation(0);
+                bullet.move(speed, 0);
                 break;
             case 2: //up
+                bullet.setRotation(90);
                 bullet.move(0,-speed/2);
                 break;
             case 3: //left
+                bullet.setRotation(0);
                 bullet.move(-speed,0);
                 break;
         }
 
 }
 
+
 void Bullet::Render(Window& l_window){
+
     l_window.Draw(bullet);
 }

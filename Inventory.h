@@ -9,29 +9,27 @@
 #include <vector>
 #include <algorithm>
 #include <SFML/Graphics.hpp>
-
+#include "Window.h"
 template <typename T>
 
 class Inventory {
 private:
     int size;
-    std::vector<T> element;
-    sf::RectangleShape inventoryWindow;
+    std::vector<T> elements;
+    sf::RectangleShape *inventoryWindow;
     sf::Font invFont;
-    sf::Text text;
+    sf::Text *text;
     int rollCounter;
     bool isOpen;
     //todo se vuoi aggiungi categoria..
 
 public:
-    explicit Inventory(int size=15, std:: vector<T> chest={}): size(size), element(chest){
+    explicit Inventory(int size=15, std:: vector<T> chest={}): size(size), elements(chest){
         rollCounter=0;
         isOpen=false;
         invFont.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
-        text.setFont(invFont);
-        text.setPosition(inventoryWindow.getPosition().x+10,inventoryWindow.getPosition().y+5);
-        text.setFillColor(sf::Color::Black);
-        text.setCharacterSize(10);
+        inventoryWindow= nullptr;
+        text= nullptr;
     }
     int getSize() const{
         return size;
@@ -39,10 +37,12 @@ public:
     void setSize(int s){
         size=s;
     }
-    bool getElement(T el);
+    bool getElement(T& el);
     bool trowElement(T el);
 
     void openWindow();
+    void closeWindow();
+    void Render(Window& l_window);
 
 };
 
