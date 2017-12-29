@@ -9,6 +9,7 @@
 
 Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y, Weapon* w):
         name(name), Character(h, x, y, w), sanityPoint(sp), abilityPoint(ap){
+    torch=false;
     texture.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/sprite/first-detective.png");
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0,0,73,110)); //left, top, width, length
@@ -108,11 +109,19 @@ void Detective::useMedicine(Medicine medication) {
         setSanity(medication.getSanityPoint());
     else
         heal(medication.getHP());
+    //medikit.trowElement(medication);
     }
 
 void Detective::Render(Window& l_window){
     l_window.Draw(sprite);
     weapon->Render(l_window);
-    if(inventoryState)
-        medikit.Render(l_window);
+    if(inventoryState){}
+        //medikit.Render(l_window);
+}
+
+void Detective::getMedicine(Medicine &med) {
+    bool isNotFull;
+    //isNotFull=medikit.getElement(med);
+    if(!isNotFull)
+        std::cout<<"Non puoi portarla con te";
 }

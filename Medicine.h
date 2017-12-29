@@ -18,7 +18,7 @@ public:
     bool isPhisical(){
         return type == medType::hp;
     }
-    std::string getName(){
+    const std::string &getName() const{
         return name;
     }
     int getHP() const {

@@ -14,31 +14,29 @@ template <typename T>
 
 class Inventory {
 private:
-    int size;
+    int maxSize;
     std::vector<T> elements;
     sf::RectangleShape *inventoryWindow;
     sf::Font invFont;
     sf::Text *text;
-    int rollCounter;
     bool isOpen;
     //todo se vuoi aggiungi categoria..
 
 public:
-    explicit Inventory(int size=15, std:: vector<T> chest={}): size(size), elements(chest){
-        rollCounter=0;
+    explicit Inventory(int size=10, std:: vector<T> chest={}): maxSize(size), elements(chest){
         isOpen=false;
         invFont.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
         inventoryWindow= nullptr;
         text= nullptr;
     }
-    int getSize() const{
-        return size;
+    int getMaxSize() const{
+        return maxSize;
     }
-    void setSize(int s){
-        size=s;
+    void setMaxSize(int s){
+        maxSize=s;
     }
     bool getElement(T& el);
-    bool trowElement(T el);
+    bool trowElement(T& el);
 
     void openWindow();
     void closeWindow();

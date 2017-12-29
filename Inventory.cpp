@@ -6,14 +6,14 @@
 
 template <typename T>
 bool Inventory<T>::getElement(T& el){
-    if (elements.size()>=this->size)
+    if (elements.size()>=this->maxSize) //se la il numero di oggetti è maggiore o uguale alla capienza non aggiungere altri oggetti
         return false;
     elements.push_back(el);
     return true;
 }
 
 template <typename T>
-bool Inventory<T>::trowElement(T el) {
+bool Inventory<T>::trowElement(T& el) {
     if(elements.empty())
         return false;
 
@@ -29,9 +29,8 @@ bool Inventory<T>::trowElement(T el) {
 template <typename T>
 void Inventory<T>::openWindow() {
 
-    std::string elementName="";
-    int firstLine=0;
-    long int limit=9;
+    std::string elementName;
+        long int limit=maxSize;
 
     if(elements.size()<limit)
         limit=elements.size();
@@ -50,12 +49,9 @@ void Inventory<T>::openWindow() {
     text->setCharacterSize(10);
 
     isOpen=true;
+    elementName="";
 
-    /*if(sf::Mouse::getPosition().x>inventoryWindow.getOrigin().x&& sf::Mouse::getPosition().x<inventoryWindow.getSize().x+inventoryWindow.getOrigin().x)
-        if (sf::Mouse::getPosition().y>inventoryWindow.getOrigin().y&& sf::Mouse::getPosition().y<inventoryWindow.getSize().y+inventoryWindow.getOrigin().y)
-            firstLine=firstLine+rollCounter;*/ //todo observer
-
-    for(int i=firstLine;i<limit+firstLine;i++){
+    for(int i=0;i<limit;i++){
         elementName=elementName+"-"+elements[i].getName()+"/n";//todo finish: find a way to insert a string in stl
     }
 

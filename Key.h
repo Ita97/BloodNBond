@@ -14,8 +14,28 @@ private:
     bool isBroken;
 
 public:
-    Key(keyType type): material(type){
+    explicit Key(keyType type): material(type){
         isBroken=false;
+        switch(type) { //todo add sprite
+            case keyType::wood:
+                break;
+            case keyType::stone:
+                break;
+            case keyType::brass:
+                break;
+            case keyType::copper:
+                break;
+            case keyType::silver:
+                break;
+            case keyType::gold:
+                break;
+            case keyType::platinum:
+                break;
+            case keyType::titanium:
+                break;
+            case keyType::skeleton:
+                break;
+        }
     }
     void use(){
         if(isBroken)

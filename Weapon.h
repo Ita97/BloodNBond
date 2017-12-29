@@ -23,7 +23,7 @@ public:
     explicit Weapon()= default;
     virtual ~Weapon()= default;
 
-    std::string getName(){
+   const std::string &getName() const{
         return name;
     }
     virtual int use(sf::Vector2f detPosition, sf::Vector2f enemyPosition, sf::Vector2f collisionArea, int direction)=0;
@@ -34,7 +34,7 @@ public:
         return strength;
     }
     void setStrength(int strength) {
-        Weapon::strength = strength;
+        this->strength = strength;
     }
 
     const std::string &getDescription() const {
@@ -42,7 +42,7 @@ public:
     }
 
     void setDescription(const std::string &description) {
-        Weapon::description = description;
+        this->description = description;
     }
 
     virtual Weapon* clone()=0;

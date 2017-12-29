@@ -11,6 +11,8 @@
 #include "Inventory.h"
 #include "Medicine.h"
 #include "Window.h"
+#include "Key.h"
+#include "Message.h"
 #include <SFML/Graphics.hpp>
 
 
@@ -22,7 +24,7 @@ public:
 
     void move() override;
     void attack(Character& enemy) override;
-
+    void use(){}//todo utilizza per aprire la finestra per sarper cosa fare col tasto dx
 
     int getSanity() const{
         return sanityPoint;
@@ -36,12 +38,7 @@ public:
     void setAbilityPoint(int ap){
         abilityPoint=ap;
     }
-    void getMedicine(Medicine &med) {
-        bool isNotFull;
-        isNotFull=medikit.getElement(med);
-        if(!isNotFull)
-            std::cout<<"Non puoi portarla con te";
-    }
+    void getMedicine(Medicine &med);
     void openMedikit(){
         medikit.openWindow();
         inventoryState=true;
@@ -51,13 +48,24 @@ public:
         inventoryState=false;
     }
     void useMedicine(Medicine medication);
+
+    void getTorch(){
+        torch=true;
+    }
+    bool haveTorch(){
+        return torch;
+    }
     void Render(Window& l_window) override;
+
 private:
     std::string name;
     int sanityPoint;
     int abilityPoint;
     bool inventoryState;
+    bool torch;
     Inventory<Medicine> medikit;
+    Inventory<Key> keychain;
+    Inventory<Message> notebook;
 
 
 
