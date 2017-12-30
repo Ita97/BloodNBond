@@ -29,6 +29,7 @@ public:
         return sanityPoint;
     }
 
+    bool operator==(const Medicine& right );
 private:
     std::string name;
     int healtPoint;

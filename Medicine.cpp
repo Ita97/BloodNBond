@@ -20,3 +20,14 @@ Medicine::Medicine(int value, medType type) : type(type){
             sanityPoint=value;
     }
 }
+
+bool Medicine::operator==(const Medicine &right) {
+    if(this->type==right.type)
+        if(this->type==medType::hp) {
+            if (this->healtPoint == right.healtPoint)
+                return true;
+        }
+        else if(this->sanityPoint==right.sanityPoint)
+            return true;
+    return false;
+}

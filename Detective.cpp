@@ -115,13 +115,13 @@ void Detective::useMedicine(Medicine medication) {
 void Detective::Render(Window& l_window){
     l_window.Draw(sprite);
     weapon->Render(l_window);
-    if(inventoryState){}
-        //medikit.Render(l_window);
+    medikit.Render(l_window);
+
 }
 
 void Detective::getMedicine(Medicine &med) {
     bool isNotFull;
-    //isNotFull=medikit.getElement(med);
+        isNotFull=medikit.getElement(med);
     if(!isNotFull)
         std::cout<<"Non puoi portarla con te";
 }

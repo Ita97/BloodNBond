@@ -41,11 +41,9 @@ public:
     void getMedicine(Medicine &med);
     void openMedikit(){
         medikit.openWindow();
-        inventoryState=true;
     }
     void closeMedikit(){
         medikit.closeWindow();
-        inventoryState=false;
     }
     void useMedicine(Medicine medication);
 
@@ -61,7 +59,6 @@ private:
     std::string name;
     int sanityPoint;
     int abilityPoint;
-    bool inventoryState;
     bool torch;
     Inventory<Medicine> medikit;
     Inventory<Key> keychain;
