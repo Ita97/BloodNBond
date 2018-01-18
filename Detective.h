@@ -45,7 +45,19 @@ public:
     void closeMedikit(){
         medikit.closeWindow();
     }
-    void useMedicine(Medicine medication);
+    void openNotebook(){
+        notebook.openWindow();
+    }
+    void closeNotebook(){
+        notebook.closeWindow();
+    }
+    void openKeychain(){
+        keychain.openWindow();
+    };
+    void closeKeychain(){
+        keychain.closeWindow();
+    }
+    void useMedicine(Medicine& medication);
 
     void getTorch(){
         torch=true;
@@ -54,6 +66,7 @@ public:
         return torch;
     }
     void Render(Window& l_window) override;
+    void RenderInventory(Window& l_window);
 
 private:
     std::string name;

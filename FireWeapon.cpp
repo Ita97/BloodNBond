@@ -59,7 +59,7 @@ void FireWeapon::reloadCartridge(sf::Vector2f bulletSize, int ammo) {
         cartridge+=ammo;
 }
 
-int FireWeapon::use(sf::Vector2f detPosition, sf::Vector2f enemyPosition, sf::Vector2f collisionArea, int direction) { //todo correct speed bug and the rendering
+int FireWeapon::use(sf::Vector2f detPosition, sf::Vector2f enemyPosition, sf::Vector2f collisionArea, int direction) {
     sf::Time time;
     time=weaponClock.getElapsedTime();
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && time>rate) {

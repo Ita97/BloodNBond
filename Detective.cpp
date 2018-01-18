@@ -9,8 +9,14 @@
 
 Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y, Weapon* w):
         name(name), Character(h, x, y, w), sanityPoint(sp), abilityPoint(ap){
+    notebook.setWindowSize(sf::Vector2f(30, 100),780);
+    notebook.setName(" Notebook");
+    keychain.setWindowSize(sf::Vector2f(60, 100),810);
+    keychain.setName("  Keychain");
+    medikit.setWindowSize(sf::Vector2f(90, 100),840);
+    medikit.setName(" Medikit");
     torch=false;
-    texture.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/sprite/first-detective.png");
+    texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/detective/first_hero.png");
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0,0,73,110)); //left, top, width, length
     sprite.setOrigin(73/2,110/2);
@@ -18,7 +24,6 @@ Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y
     frame=0;
     walk=0;
     collisionArea=sf::Vector2f(40,110/3);
-
 }
 
 
@@ -104,7 +109,7 @@ Detective& Detective::operator =(const Detective &right) {
     return *this;
 }
 
-void Detective::useMedicine(Medicine medication) {
+void Detective::useMedicine(Medicine& medication) {//
     if(medication.isPsichic())
         setSanity(medication.getSanityPoint());
     else
@@ -115,8 +120,6 @@ void Detective::useMedicine(Medicine medication) {
 void Detective::Render(Window& l_window){
     l_window.Draw(sprite);
     weapon->Render(l_window);
-    medikit.Render(l_window);
-
 }
 
 void Detective::getMedicine(Medicine &med) {
@@ -124,4 +127,11 @@ void Detective::getMedicine(Medicine &med) {
         isNotFull=medikit.getElement(med);
     if(!isNotFull)
         std::cout<<"Non puoi portarla con te";
+}
+
+void Detective::RenderInventory(Window& l_window){
+    medikit.Render(l_window);
+    keychain.Render(l_window);
+    notebook.Render(l_window);
+
 }

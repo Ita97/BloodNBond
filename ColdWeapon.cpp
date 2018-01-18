@@ -14,11 +14,11 @@ ColdWeapon::ColdWeapon(coldWeaponType t) : c_type(t){
             strength=5;
             description="Potrebbe tornarmi utile..";
             break;
-        case coldWeaponType ::axe:
-            name="Axe";
+        case coldWeaponType ::sword:
+            name="Sword";
             rate=sf::seconds(0.0002);
-            strength=30;
-            description="E' pesante, ma non e' niente male";
+            strength=20;
+            description="Bella, affilata e leggera, sarà micidiale!";
             break;
         case coldWeaponType ::stick:
             name="Stick";

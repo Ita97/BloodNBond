@@ -6,34 +6,37 @@
 #define BLOODBOND_KEY_H
 #include <iostream>
 
-enum class keyType{wood, stone, brass, copper, silver, gold, platinum, titanium, skeleton};
+enum class keyType{ stone, copper, silver, gold, titanium, skeleton};
 
 class Key {
 private:
+    std::string name;
     keyType  material;
     bool isBroken;
+    sf::Texture texture;
+    sf::Sprite sprite;
 
 public:
     explicit Key(keyType type): material(type){
         isBroken=false;
         switch(type) { //todo add sprite
-            case keyType::wood:
-                break;
             case keyType::stone:
-                break;
-            case keyType::brass:
+                name="Stone";
                 break;
             case keyType::copper:
+                name="Copper";
                 break;
             case keyType::silver:
+                name="Silver";
                 break;
             case keyType::gold:
-                break;
-            case keyType::platinum:
+                name="Gold";
                 break;
             case keyType::titanium:
+                name="Titanium";
                 break;
             case keyType::skeleton:
+                name="Skeleton";
                 break;
         }
     }
@@ -44,6 +47,10 @@ public:
     }
     keyType getMaterial(){
         return material;
+    }
+    const std::string &getName(){
+        name=name+" Key";
+        return name;
     }
 };
 

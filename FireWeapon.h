@@ -5,7 +5,6 @@
 #ifndef BLOODBOND_FIREWEAPON_H
 #define BLOODBOND_FIREWEAPON_H
 
-
 #include <SFML/Graphics/RectangleShape.hpp>
 #include "Weapon.h"
 #include "Bullet.h"

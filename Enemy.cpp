@@ -11,7 +11,7 @@
 Enemy::Enemy(int hp, int x, int y, int stg, Weapon *weapon, EnemyType type): Character(hp, x, y, weapon), strength(stg), category(type){
     switch(category) {
         case (EnemyType::dragon):
-            texture.loadFromFile("/home/ita/CLionProjects/BloodBond/pic/sprite/dragon.png");
+            texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/enemy/dragon.png");
             sprite.setTextureRect(sf::IntRect(190, 200, 190, 200));//intRect(left, top, width, length)
             sprite.setOrigin(190/2,200/2);
             frame = 1;

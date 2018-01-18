@@ -5,9 +5,10 @@
 #ifndef BLOODBOND_COLDWEAPON_H
 #define BLOODBOND_COLDWEAPON_H
 
+
 #include "Weapon.h"
 
-enum class coldWeaponType{knife, stick, axe};
+enum class coldWeaponType{knife, stick, sword};
 
 class ColdWeapon: virtual public Weapon {
 private:

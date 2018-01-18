@@ -2,8 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include "Window.h"
 #include "Game.h"
-#include <ctime>
-#include <sstream>
 #include <string>
 
 #include <iostream>
@@ -14,17 +12,15 @@
 #include "Weapon.h"
 #include "ColdWeapon.h"
 #include "FireWeapon.h"
-
-template <typename T>
-std::string toString(T arg){//trasforma numeri in stringhe
-    std::stringstream ss;
-    ss << arg;
-    return ss.str();
-}
+#include "Key.h"
+#include "Utilities.h"
 
 
 
 int main() {
+    sf::Time second=sf::seconds(1);
+    bool isOpenN=false,isOpenK=false,isOpenM=false, isHold=false;
+
     int x = 880, y = 205;
     unsigned int w =960 ;
     unsigned int h =480;
@@ -51,7 +47,8 @@ int main() {
 
     Medicine *potion;
     potion= new Medicine(7,medType::hp);
-
+    Key* overpowaKey;
+    overpowaKey=new Key(keyType::gold);
 
     FireWeapon* magnum;
     magnum=new FireWeapon(fireWeaponType::gun);
@@ -65,14 +62,51 @@ int main() {
     sf::Time time;
     clock.restart();
 
+
+    jack.getMedicine(*potion);
+
     while (!window.IsDone()){
     window.Update();
 
 
 
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)){
+            if(!isHold) {
+                isOpenM=!isOpenM;
+                if (isOpenM)
+                   jack.openMedikit();
+                else
+                    jack.closeMedikit();
+            }
+            isHold=true;
+        }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)){}
-            //jack.getMedicine(*potion); todo make it work!
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+            if (!isHold) {
+                isOpenK = !isOpenK;
+                if (isOpenK)
+                    jack.openKeychain();
+                else
+                    jack.closeKeychain();
+            }
+            isHold=true;
+        }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)){
+            if(!isHold) {
+                isOpenN=!isOpenN;
+                if (isOpenN)
+                    jack.openNotebook();
+                else
+                    jack.closeNotebook();
+            }
+            isHold=true;
+        }
+        else
+            isHold=false;
+
+
+
+
     // movement
         dragon->move();
         jack.move();
@@ -91,7 +125,7 @@ int main() {
             dragon->Render(window);
             jack.Render(window);
         }
-
+        jack.RenderInventory(window);
         window.EndDraw();
     }
 

@@ -10,78 +10,71 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp>
 #include "Window.h"
-template <typename T>
 
+
+template <typename T>
 class Inventory {
 private:
-    int maxSize;
+    sf::Texture inventoryBox;
+    sf::Sprite box[8];
+    sf::Text name;
+    float scroll;
+    float WindowMaxSize;
+    sf::Vector2f windowSize;
     std::vector<T> elements;
     sf::RectangleShape inventoryWindow;
     sf::Font invFont;
     sf::Text text;
+    std::string elementName;
     bool isOpen;
-    //todo se vuoi aggiungi categoria..
 
 public:
-    explicit Inventory(int size=10, std:: vector<T> chest={});
-    int getMaxSize() const{
-        return maxSize;
-    }
-    void setMaxSize(int s){
-        maxSize=s;
-    }
-    bool getElement(T& el);
-    bool trowElement(T& el);
+    explicit Inventory(const std::string &name = "Vault", std::vector<T> chest = {});
 
+    bool getElement(T &el);
+    bool trowElement(int pos);
+    void setWindowSize(sf::Vector2f windowSize, float max) {
+        this->windowSize = windowSize;
+        WindowMaxSize=max;
+        for(int i=0;i<8;i++){
+            box[i].setTexture(inventoryBox);
+            box[i].setOrigin(inventoryBox.getSize().x/2,inventoryBox.getSize().y/2);
+            box[i].setPosition(max-75-inventoryBox.getSize().x*i,inventoryWindow.getPosition().y+windowSize.y/2);
+        }
+    }
     void openWindow();
     void closeWindow();
+    void setName(std::string string);
     void Render(Window& l_window);
-
 };
-
 //Methods Definition
 
 template <typename T>
-bool Inventory<T>::getElement(T& el){
-    if (elements.size()>=maxSize) //se il numero di oggetti è maggiore o uguale alla capienza non aggiungere altri oggetti
+bool Inventory<T>::getElement(T& el){ //todo add sprite
+    if (elements.size()>=8) //se il numero di oggetti è maggiore o uguale alla capienza non aggiungere altri oggetti
         return false;
 
     elements.push_back(el);
+    elementName=elementName+"o "+el.getName()+"  ";//ogni volta che aggiungo un elemento aggiorno la lista
+    text.setString(elementName);
     return true;
 }
 
 
 template <typename T>
-bool Inventory<T>::trowElement(T& el) {//todo make it better
-    if(elements.empty())
+bool Inventory<T>::trowElement(int pos) {
+    if(elements.empty()||pos>elements.size())
         return false;
-
-    for (auto it = elements.begin(); it !=elements.end(); it++) {
-        if (el == elements[it]){
-            elements.erase(it);
-            return true;
-        }
+    auto it = elements.begin();
+    for(int i=0;i<pos;i++)
+        it++;
+    elements.erase(it);
+    return true;
     }
 
-
-}
 template <typename T>
 void Inventory<T>::openWindow() {
-
-    std::string elementName;
-    long int limit=maxSize;
-
-    if(elements.size()<limit)
-        limit=elements.size();
-
     isOpen=true;
-    elementName="";
-
-    for(int i=0;i<limit;i++){
-        elementName=elementName+"-"+elements[i].getName()+"/n";//todo andrebbe aggiornato all'aggiunta di ogni elemento
-    }
-
-    text.setString(elementName);
 }
 
 template <typename T>
@@ -89,27 +82,55 @@ void Inventory<T>::closeWindow() {
     isOpen=false;
 }
 
+
 template <typename T>
 void Inventory<T>::Render(Window &l_window) {
-    if(isOpen){
-        l_window.Draw(inventoryWindow);
-        l_window.Draw(text);
-    }
-}
-template <typename  T>
-Inventory<T>::Inventory(int size, std::vector<T> chest) : maxSize(size), elements(chest){
-    isOpen=false;
-    invFont.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
-    inventoryWindow.setSize(sf::Vector2f(100,70));
-    inventoryWindow.setPosition(0,0);
-    inventoryWindow.setFillColor(sf::Color(211,211,211,120)); //silver color
-    inventoryWindow.setOutlineThickness(5);
-    inventoryWindow.setOutlineColor(sf::Color::Black);
 
+    name.setPosition(scroll-name.getCharacterSize(), inventoryWindow.getPosition().y+windowSize.y);
+    l_window.Draw(inventoryWindow);
+    l_window.Draw(name);
+
+    if(isOpen&&scroll<WindowMaxSize)
+        scroll+=6;
+    else if(isOpen && scroll>=WindowMaxSize)
+        for(auto& i:box)
+            l_window.Draw(i);
+    else if(!isOpen&& scroll>windowSize.x)
+        scroll-=6;
+    else if(!isOpen&& scroll <=windowSize.x)
+        scroll=windowSize.x;
+
+    inventoryWindow.setSize(sf::Vector2f(scroll,windowSize.y));
+}
+
+template <typename  T>
+Inventory<T>::Inventory(const std::string &name, std::vector<T> chest)
+        : elements(chest){
+    inventoryBox.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/inventory_box.png");
+    isOpen=false;
+    scroll=windowSize.x;
+    invFont.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
+    inventoryWindow.setSize(windowSize);
+    inventoryWindow.setPosition(0,380);
+    inventoryWindow.setFillColor(sf::Color(255,218,185)); //scroll color
+    inventoryWindow.setOutlineThickness(2);
+    inventoryWindow.setOutlineColor(sf::Color(101,67,33)); //dark brown color
     text.setFont(invFont);
+    this->name.setFont(invFont);
+    this->name.setFillColor(sf::Color(101,67,33));
     text.setPosition(inventoryWindow.getPosition().x+10,inventoryWindow.getPosition().y+5);
     text.setFillColor(sf::Color::Black);
-    text.setCharacterSize(10);
+    text.setCharacterSize(25);
+    elementName="";
+    WindowMaxSize=0;
+    setName(name);
+}
+
+template <typename  T>
+void Inventory<T>::setName(std::string string) {
+    this->name.setString(string);
+    if(string!="Vault")
+        name.setRotation(-90);
 }
 
 #endif //BLOODBOND_INVENTORY_H
