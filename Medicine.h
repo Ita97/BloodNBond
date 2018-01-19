@@ -6,6 +6,9 @@
 #define BLOODBOND_MEDICINE_H
 
 #include <string>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+
 enum class medType{hp,sp};
 
 class Medicine {
@@ -30,11 +33,19 @@ public:
     }
 
     bool operator==(const Medicine& right );
+    const sf::Sprite& getSprite(){
+        return sprite;
+    }
+    const sf::Texture& getInventoryTexture(){
+        return invTexture;
+    }
 private:
     std::string name;
     int healtPoint;
     int sanityPoint;
     medType type;
+    sf::Texture texture,invTexture;
+    sf::Sprite sprite;
 };
 
 

@@ -13,7 +13,7 @@ private:
     std::string name;
     keyType  material;
     bool isBroken;
-    sf::Texture texture;
+    sf::Texture texture,invTexture;
     sf::Sprite sprite;
 
 public:
@@ -25,20 +25,29 @@ public:
                 break;
             case keyType::copper:
                 name="Copper";
+                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/key/copper_key.png");
+                invTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/copper_key.png");
                 break;
             case keyType::silver:
                 name="Silver";
+                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/key/silver_key.png");
+                invTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/silver_key.png");
                 break;
             case keyType::gold:
                 name="Gold";
+                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/key/gold_key.png");
+                invTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/gold_key.png");
                 break;
             case keyType::titanium:
                 name="Titanium";
                 break;
             case keyType::skeleton:
                 name="Skeleton";
+                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/key/skeleton_key.png");
+                invTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/skeleton_key.png");
                 break;
         }
+        sprite.setTexture(texture);
     }
     void use(){
         if(isBroken)
@@ -51,6 +60,12 @@ public:
     const std::string &getName(){
         name=name+" Key";
         return name;
+    }
+    const sf::Sprite& getSprite(){
+        return sprite;
+    }
+    const sf::Texture& getInventoryTexture(){
+        return invTexture;
     }
 };
 
