@@ -19,7 +19,7 @@
 
 int main() {
     sf::Time second=sf::seconds(1);
-    bool isOpenN=false,isOpenK=false,isOpenM=false, isHold=false;
+
 
     int x = 880, y = 205;
     unsigned int w =960 ;
@@ -68,43 +68,9 @@ int main() {
     while (!window.IsDone()){
     window.Update();
 
+       // std::cout<<sf::Mouse::getPosition(window.getWindow()).x<<"-"<<sf::Mouse::getPosition(window.getWindow()).y<<std::endl;
 
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)){
-            if(!isHold) {
-                isOpenM=!isOpenM;
-                if (isOpenM)
-                   jack.openMedikit();
-                else
-                    jack.closeMedikit();
-            }
-            isHold=true;
-        }
-
-        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
-            if (!isHold) {
-                isOpenK = !isOpenK;
-                if (isOpenK)
-                    jack.openKeychain();
-                else
-                    jack.closeKeychain();
-            }
-            isHold=true;
-        }
-        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)){
-            if(!isHold) {
-                isOpenN=!isOpenN;
-                if (isOpenN)
-                    jack.openNotebook();
-                else
-                    jack.closeNotebook();
-            }
-            isHold=true;
-        }
-        else
-            isHold=false;
-
-
+    jack.use(window);
 
 
     // movement
@@ -212,4 +178,43 @@ int main() {
         //dragon.move(dragon.getPosX(), dragon.getPosY());
         //window.draw(dragon.getSprite());
         window.display();
-    }*/
+    }
+
+
+    ***open and close inventories
+
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)){
+            if(!isHold) {
+                isOpenM=!isOpenM;
+                if (isOpenM)
+                   jack.openMedikit();
+                else
+                    jack.closeMedikit();
+            }
+            isHold=true;
+        }
+
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+            if (!isHold) {
+                isOpenK = !isOpenK;
+                if (isOpenK)
+                    jack.openKeychain();
+                else
+                    jack.closeKeychain();
+            }
+            isHold=true;
+        }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)){
+            if(!isHold) {
+                isOpenN=!isOpenN;
+                if (isOpenN)
+                    jack.openNotebook();
+                else
+                    jack.closeNotebook();
+            }
+            isHold=true;
+        }
+        else
+            isHold=false;
+
+*/

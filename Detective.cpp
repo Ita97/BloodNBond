@@ -1,7 +1,7 @@
 //
 // Created by ita on 14/09/17.
 //
-
+bool isHold=false;
 #include <iostream>
 #include "Detective.h"
 
@@ -93,6 +93,88 @@ void Detective::attack(Character& enemy) {
 
 }
 
+void Detective::use(Window& window) {
+
+    //interazioni con le inventories mediante mouse e tastiera
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)){
+        if(!isHold) {
+
+            if (!medikit.isOpen()) {
+                openMedikit();
+                closeNotebook();
+                closeKeychain();
+            }
+            else
+                closeMedikit();
+        }
+        isHold=true;
+    }
+
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+        if (!isHold) {
+            if (!keychain.isOpen()) {
+                openKeychain();
+                closeNotebook();
+                closeMedikit();
+            }
+            else
+                closeKeychain();
+        }
+        isHold=true;
+    }
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)){
+        if(!isHold) {
+            if (!notebook.isOpen()) {
+                openNotebook();
+                closeMedikit();
+                closeKeychain();
+            }
+            else
+                closeNotebook();
+        }
+        isHold=true;
+    }
+    else if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+        if(!isHold){
+            if(weapon->checkCollision(medikit.getPosition(),medikit.getCollisionArea(),
+                                      sf::Vector2f(sf::Mouse::getPosition(window.getWindow()).x,sf::Mouse::getPosition(window.getWindow()).y))){
+                if (!medikit.isOpen()&&!keychain.isOpen()&&!notebook.isOpen())
+                    openMedikit();
+                else
+                    closeMedikit();
+            }else if(weapon->checkCollision(keychain.getPosition(),keychain.getCollisionArea(),
+                                            sf::Vector2f(sf::Mouse::getPosition(window.getWindow()).x,sf::Mouse::getPosition(window.getWindow()).y))){
+                    if (!keychain.isOpen()&&!notebook.isOpen()) {
+                        openKeychain();
+                        closeNotebook();
+                        closeMedikit();
+                    }
+                    else
+                        closeKeychain();
+            }else if(weapon->checkCollision(notebook.getPosition(),notebook.getCollisionArea(),
+                                            sf::Vector2f(sf::Mouse::getPosition(window.getWindow()).x,sf::Mouse::getPosition(window.getWindow()).y))){
+                if (!notebook.isOpen()) {
+                    openNotebook();
+                    closeMedikit();
+                    closeKeychain();
+                }
+                else
+                    closeNotebook();
+            }
+
+            //if(weapon->checkCollision()) todo
+
+        }
+        isHold=true;
+
+    }
+    else
+        isHold=false;
+
+
+
+}
+
 Detective::Detective(const Detective& original): Character(original){
     name=original.name;
     sanityPoint=original.sanityPoint;
@@ -109,7 +191,7 @@ Detective& Detective::operator =(const Detective &right) {
     return *this;
 }
 
-void Detective::useMedicine(Medicine& medication) {//
+void Detective::useMedicine(Medicine& medication) {
     if(medication.isPsichic())
         setSanity(medication.getSanityPoint());
     else

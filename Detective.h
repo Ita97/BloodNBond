@@ -24,7 +24,7 @@ public:
 
     void move() override;
     void attack(Character& enemy) override;
-    void use(){}//todo utilizza per aprire la finestra per sarper cosa fare col tasto dx
+    void use(Window& window);//todo utilizza per aprire la finestra per sarper cosa fare col tasto dx
 
     int getSanity() const{
         return sanityPoint;

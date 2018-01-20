@@ -24,6 +24,12 @@ public:
     sf::Vector2u GetWindowSize();
 
     void Draw(sf::Drawable& l_drawable);
+    sf::Vector2i getPosition(){
+        return m_window.getPosition();
+    }
+    const sf::RenderWindow& getWindow(){
+        return m_window;
+    }
 private:
     void Setup(const std::string& l_title, const sf::Vector2u& l_size);
     void Destroy();
