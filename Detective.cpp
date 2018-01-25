@@ -94,7 +94,7 @@ void Detective::attack(Character& enemy) {
 }
 
 void Detective::use(Window& window) {
-
+    int pos;
     //interazioni con le inventories mediante mouse e tastiera
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)){
         if(!isHold) {
@@ -116,7 +116,7 @@ void Detective::use(Window& window) {
                 openKeychain();
                 closeNotebook();
                 closeMedikit();
-            }
+                }
             else
                 closeKeychain();
         }
@@ -160,13 +160,15 @@ void Detective::use(Window& window) {
                 }
                 else
                     closeNotebook();
+            }else {
+                    medikit.SelectObject(sf::Mouse::getPosition(window.getWindow()));
+                    notebook.SelectObject(sf::Mouse::getPosition(window.getWindow()));
+                    keychain.SelectObject(sf::Mouse::getPosition(window.getWindow()));//todo solve the problems:
+                                                                                        //1) use Medicine
+                                                                                        //2) if one objectwindow is open, u cannot open a different one
             }
-
-            //if(weapon->checkCollision()) todo
-
         }
         isHold=true;
-
     }
     else
         isHold=false;
@@ -207,6 +209,20 @@ void Detective::Render(Window& l_window){
 void Detective::getMedicine(Medicine &med) {
     bool isNotFull;
         isNotFull=medikit.getElement(med);
+    if(!isNotFull)
+        std::cout<<"Non puoi portarla con te";
+}
+
+void Detective::getMessage(Message &note) {
+    bool isNotFull;
+    isNotFull=notebook.getElement(note);
+    if(!isNotFull)
+        std::cout<<"Non puoi portarlo con te";
+}
+
+void Detective::getKey(Key &key) {
+    bool isNotFull;
+    isNotFull=keychain.getElement(key);
     if(!isNotFull)
         std::cout<<"Non puoi portarla con te";
 }

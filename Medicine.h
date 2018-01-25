@@ -21,6 +21,9 @@ public:
     bool isPhisical(){
         return type == medType::hp;
     }
+    const std::string& getDescription(){
+        return description;
+    }
     const std::string &getName() const{
         return name;
     }
@@ -33,14 +36,18 @@ public:
     }
 
     bool operator==(const Medicine& right );
-    const sf::Sprite& getSprite(){
+
+    sf::Sprite& getSprite(){
         return sprite;
     }
     const sf::Texture& getInventoryTexture(){
         return invTexture;
     }
+    bool use(){
+        return true;
+    }
 private:
-    std::string name;
+    std::string name, description;
     int healtPoint;
     int sanityPoint;
     medType type;

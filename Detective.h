@@ -45,12 +45,14 @@ public:
     void closeMedikit(){
         medikit.closeWindow();
     }
+    void getMessage(Message &note);
     void openNotebook(){
         notebook.openWindow();
     }
     void closeNotebook(){
         notebook.closeWindow();
     }
+    void getKey(Key& key);
     void openKeychain(){
         keychain.openWindow();
     };

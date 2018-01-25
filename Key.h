@@ -10,7 +10,7 @@ enum class keyType{ stone, copper, silver, gold, titanium, skeleton};
 
 class Key {
 private:
-    std::string name;
+    std::string name, description;
     keyType  material;
     bool isBroken;
     sf::Texture texture,invTexture;
@@ -19,7 +19,7 @@ private:
 public:
     explicit Key(keyType type): material(type){
         isBroken=false;
-        switch(type) { //todo add sprite
+        switch(type) {
             case keyType::stone:
                 name="Stone";
                 break;
@@ -47,21 +47,32 @@ public:
                 invTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/skeleton_key.png");
                 break;
         }
+
+        name=name+" Key";
+        description="It's an old "+name+".\nWho knows how it could\n be use for?\n\nPay attention: it's \nvery fragile!";
         sprite.setTexture(texture);
+        sprite.setOrigin(texture.getSize().x/2,texture.getSize().y/2);
+        sprite.setScale(0.4,0.4);
+        sprite.setTextureRect(sf::IntRect(50,0,600,550));
     }
-    void use(){
+    bool use(){//todo complete
+        //if(davanti alla porta giusta) ->openthedoor..
         if(isBroken)
             std::cout<<"E' gia stata usata!";
-        isBroken=true;
+        else
+            isBroken=true;
+        return isBroken;
     }
     keyType getMaterial(){
         return material;
     }
-    const std::string &getName(){
-        name=name+" Key";
+    const std::string& getDescription(){
+        return description;
+    }
+    const std::string& getName(){
         return name;
     }
-    const sf::Sprite& getSprite(){
+    sf::Sprite& getSprite(){
         return sprite;
     }
     const sf::Texture& getInventoryTexture(){

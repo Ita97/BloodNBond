@@ -35,7 +35,7 @@ int main() {
     sf::Font msg, old;
     msg.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
     old.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/1942.ttf");
-    sf::Text status("Enemy HP:",old,25), hp("",old,20);
+    sf::Text status("Jack HP:",old,25), hp("",old,20);
     hp.setPosition(151,7);
     status.setPosition(7,2);
     status.setFillColor(sf::Color::Black);
@@ -45,11 +45,15 @@ int main() {
     rectangle.setFillColor(sf::Color::Red);
     rectangle.setPosition(1, 1);
 
-    Medicine *potion;
-    potion= new Medicine(7,medType::hp);
+    Medicine *potion, *aspirin;
+    potion= new Medicine(7,medType::sp);
+    aspirin= new Medicine(3, medType::hp);
     Key* overpowaKey;
-    overpowaKey=new Key(keyType::gold);
-
+    overpowaKey=new Key(keyType::copper);
+    Message* clue;
+    clue= new Message();
+    std::string content="The answer is \ninside your heArt";
+    clue->setContent(content);
     FireWeapon* magnum;
     magnum=new FireWeapon(fireWeaponType::gun);
     Enemy *dragon;
@@ -64,11 +68,13 @@ int main() {
 
 
     jack.getMedicine(*potion);
-
+    jack.getMedicine(*aspirin);
+    jack.getKey(*overpowaKey);
+    jack.getMessage(*clue);
     while (!window.IsDone()){
     window.Update();
 
-       // std::cout<<sf::Mouse::getPosition(window.getWindow()).x<<"-"<<sf::Mouse::getPosition(window.getWindow()).y<<std::endl;
+
 
     jack.use(window);
 
@@ -81,7 +87,7 @@ int main() {
         window.BeginDraw();
         window.Draw(rectangle);
         window.Draw(status);
-        hp.setString(toString<int>(dragon->getHp()));
+        hp.setString(toString<int>(jack.getHp()));
         window.Draw(hp);
 
         if(jack.getPosY()<dragon->getPosY()){
