@@ -43,9 +43,7 @@ public:
     const sf::Texture& getInventoryTexture(){
         return invTexture;
     }
-    bool use(){
-        return true;
-    }
+    void use(){}
 private:
     std::string name, description;
     int healtPoint;

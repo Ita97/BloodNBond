@@ -94,7 +94,6 @@ void Detective::attack(Character& enemy) {
 }
 
 void Detective::use(Window& window) {
-    int pos;
     //interazioni con le inventories mediante mouse e tastiera
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)){
         if(!isHold) {
@@ -161,11 +160,21 @@ void Detective::use(Window& window) {
                 else
                     closeNotebook();
             }else {
-                    medikit.SelectObject(sf::Mouse::getPosition(window.getWindow()));
-                    notebook.SelectObject(sf::Mouse::getPosition(window.getWindow()));
-                    keychain.SelectObject(sf::Mouse::getPosition(window.getWindow()));//todo solve the problems:
-                                                                                        //1) use Medicine
-                                                                                        //2) if one objectwindow is open, u cannot open a different one
+                medikit.SelectObject(sf::Mouse::getPosition(window.getWindow()));
+                if(medikit.objectIsUsed()){
+                    useMedicine(*medikit.getObject());
+                    medikit.throwElement(medikit.getObjectPosition());
+                }
+                notebook.SelectObject(sf::Mouse::getPosition(window.getWindow()));
+                if(notebook.objectIsUsed()){
+                    notebook.getObject()->open();
+                    notebook.update();
+                }
+                keychain.SelectObject(sf::Mouse::getPosition(window.getWindow()));
+                if(keychain.objectIsUsed())
+                    keychain.getObject()->use();
+
+
             }
         }
         isHold=true;
@@ -198,7 +207,6 @@ void Detective::useMedicine(Medicine& medication) {
         setSanity(medication.getSanityPoint());
     else
         heal(medication.getHP());
-    //medikit.trowElement(medication);
     }
 
 void Detective::Render(Window& l_window){

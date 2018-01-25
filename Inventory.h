@@ -6,9 +6,10 @@
 #define BLOODBOND_INVENTORY_H
 template<typename T>
 struct Object{
-    T* ptr;
+    T* ptr= nullptr;
     sf::Text name, description;
     int position;
+    bool use=false;
 };
 
 #include <vector>
@@ -21,15 +22,17 @@ template <typename T>
 class Inventory {
 private:
     std::vector<T> elements;
+    Object<T> object;
+
     sf::Texture inventoryBox,objectWindow_txt;
     sf::RectangleShape inventoryWindow;
     sf::Sprite box[8],objectWindow;
     sf::Vector2f windowSize, collisionArea;
-    sf::Text name, text;
+    sf::Text inventoryName, text;
     sf::Font font1, font2;
     float scroll, WindowMaxSize;
     bool inventoryIsOpen, objectWindowIsOpen;
-    Object<T> object;
+
 
     bool isInsideArea(sf::Vector2i focus, sf::Vector2f target,sf::Vector2f area){
         if(focus.x>target.x-area.x && focus.x<target.x+area.x)
@@ -40,34 +43,46 @@ private:
 
 public:
     explicit Inventory(const std::string &name = "Vault", std::vector<T> chest = {});
+
     bool displayObjectWindow(int pos){
         if(pos>=elements.size()||pos<0)
             return false;
         objectWindowIsOpen=true;
-        object.ptr=&elements[pos];
-        object.ptr->getSprite().setPosition(objectWindow.getPosition().x+objectWindow_txt.getSize().x/4,
-                                              objectWindow.getPosition().y+objectWindow_txt.getSize().y/2);
-        object.description.setString(object.ptr->getDescription());
-        object.name.setString(object.ptr->getName());
-        object.position=pos;
         return true;
     }
     void closeObjectWindow(){
         objectWindowIsOpen=false;
+        object.use=false;
     }
-    bool objectScreenIsOpen(){
-        return objectWindowIsOpen;
+    void openObjectWindow(){
+        objectWindowIsOpen=true;
     }
+    bool objectIsUsed(){
+        return object.use;
+    }
+    T* getObject(){
+        return object.ptr;
+    }
+    int getObjectPosition(){
+        return object.position;
+    }
+    void SelectObject(sf::Vector2i mousePosition);
+    void setObject(int pos);
+    void update(){
+        object.name.setString(object.ptr->getName());
+        object.description.setString(object.ptr->getDescription());
+    }
+
     bool getElement(T &el);
     bool throwElement(int pos);
+
     void setWindowSize(sf::Vector2f windowSize, float max);
     void openWindow();
     void closeWindow();
-    void setName(std::string string);
-    const bool isOpen(){
+    bool isOpen(){
         return inventoryIsOpen;
     }
-    void Render(Window& l_window);
+    void setName(const std::string &string);
     const sf::Vector2f getCollisionArea(){
         return collisionArea;
     }
@@ -76,37 +91,8 @@ public:
         float y=inventoryWindow.getPosition().y+collisionArea.y;
         return sf::Vector2f(x,y);
     }
-    float getBoxSize(){
-        return inventoryBox.getSize().x;
-    }
 
-    void SelectObject(sf::Vector2i mousePosition){
-        if(isOpen())
-            for(int i=0;i<8;i++)
-                if(isInsideArea(mousePosition,box[i].getPosition(),sf::Vector2f(inventoryBox.getSize().x/2,inventoryBox.getSize().y/2)))//inserisci funzione bool isInsideBox();
-                    displayObjectWindow(i);
-
-        if(objectWindowIsOpen) {
-            if (isInsideArea(mousePosition, sf::Vector2f(objectWindow.getPosition().x+objectWindow_txt.getSize().x - 10,
-                                          objectWindow.getPosition().y + 10), sf::Vector2f(10, 10)))
-                closeObjectWindow();    //chiudi finestra quando clikki la 'x'
-            if(isInsideArea(mousePosition,sf::Vector2f(objectWindow.getPosition().x + objectWindow_txt.getSize().x/4+10,
-                    objectWindow.getPosition().y + objectWindow_txt.getSize().y-14),sf::Vector2f(26.2,8.3)))
-                throwElement(object.position);
-
-
-            if(isInsideArea(mousePosition,sf::Vector2f(objectWindow.getPosition().x + 35,
-                                                       objectWindow.getPosition().y + objectWindow_txt.getSize().y-14),sf::Vector2f(26.2,8.3))) {
-
-
-                if(object.ptr->use())//todo use medicine
-                    throwElement(object.position);
-                else
-                    object.description.setString(object.ptr->getDescription());
-            }
-        }
-
-    }
+    void Render(Window& l_window);
 };
 //Methods Definition
 
@@ -130,8 +116,8 @@ Inventory<T>::Inventory(const std::string &name, std::vector<T> chest)
 
     font1.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
     font2.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/1942.ttf");
-    this->name.setFont(font1);
-    this->name.setFillColor(sf::Color(101,67,33));
+    inventoryName.setFont(font1);
+    inventoryName.setFillColor(sf::Color(101,67,33));
     setName(name);
 
     text.setFont(font1);
@@ -168,7 +154,7 @@ bool Inventory<T>::getElement(T& el){
 
 
 template <typename T>
-bool Inventory<T>::throwElement(int pos) { //pos è la casella {0,1,2,3,4,5,6,7} del vettore degli sprite
+bool Inventory<T>::throwElement(int pos) {
     sf::Texture texture;
     if(elements.empty()||pos>=elements.size())
         return false;
@@ -180,8 +166,8 @@ bool Inventory<T>::throwElement(int pos) { //pos è la casella {0,1,2,3,4,5,6,7}
     for(int i=pos;i<elements.size();i++)
         box[i].setTexture(*box[i+1].getTexture());
     box[elements.size()].setTexture(inventoryBox);
-    if(objectWindowIsOpen)
-        closeObjectWindow();
+    closeObjectWindow();
+    object.ptr= nullptr;
     return true;
     }
 
@@ -199,20 +185,23 @@ void Inventory<T>::setWindowSize(sf::Vector2f windowSize, float max) {
 template <typename T>
 void Inventory<T>::openWindow() {
     inventoryIsOpen=true;
+    if(objectIsUsed())
+        openObjectWindow();
 }
 
 template <typename T>
 void Inventory<T>::closeWindow() {
     inventoryIsOpen=false;
+    objectWindowIsOpen=false;
 }
 
 
 template <typename T>
 void Inventory<T>::Render(Window &l_window) {
 
-    name.setPosition(scroll-name.getCharacterSize(), inventoryWindow.getPosition().y+windowSize.y);
+    inventoryName.setPosition(scroll-inventoryName.getCharacterSize(), inventoryWindow.getPosition().y+windowSize.y);
     l_window.Draw(inventoryWindow);
-    l_window.Draw(name);
+    l_window.Draw(inventoryName);
 
     if(inventoryIsOpen&&scroll<WindowMaxSize)
         scroll+=6;
@@ -235,10 +224,46 @@ void Inventory<T>::Render(Window &l_window) {
 }
 
 template <typename  T>
-void Inventory<T>::setName(std::string string) {
-    this->name.setString(string);
+void Inventory<T>::setName(const std::string &string) {
+    inventoryName.setString(string);
     if(string!="Vault")
-        name.setRotation(-90);
+        inventoryName.setRotation(-90);
+}
+
+template <typename  T>
+void Inventory<T>::SelectObject(sf::Vector2i mousePosition) {
+    if(inventoryIsOpen)
+        for(int i=0;i<8;i++)
+            if(isInsideArea(mousePosition,box[i].getPosition(),sf::Vector2f(inventoryBox.getSize().x/2,inventoryBox.getSize().y/2))) {//inserisci funzione bool isInsideBox();
+                setObject(i);
+                displayObjectWindow(i);
+            }
+    if(objectWindowIsOpen) {
+        if (isInsideArea(mousePosition, sf::Vector2f(objectWindow.getPosition().x+objectWindow_txt.getSize().x - 10,
+                                                     objectWindow.getPosition().y + 10), sf::Vector2f(10, 10))) {
+            closeObjectWindow();    //chiudi finestra quando clikki la 'x'
+            object.ptr= nullptr;
+        }
+        if(isInsideArea(mousePosition,sf::Vector2f(objectWindow.getPosition().x + objectWindow_txt.getSize().x/4+10,
+                                                   objectWindow.getPosition().y + objectWindow_txt.getSize().y-14),sf::Vector2f(26.2,8.3)))
+            throwElement(object.position);
+
+
+        if(isInsideArea(mousePosition,sf::Vector2f(objectWindow.getPosition().x + 35,
+                                                   objectWindow.getPosition().y + objectWindow_txt.getSize().y-14),sf::Vector2f(26.2,8.3))) {
+            object.use=true;
+        }
+    }
+
+}
+template <typename  T>
+void Inventory<T>::setObject(int pos) {
+    object.use=false;
+    object.ptr=&elements[pos];
+    object.ptr->getSprite().setPosition(objectWindow.getPosition().x+objectWindow_txt.getSize().x/4,
+                                        objectWindow.getPosition().y+objectWindow_txt.getSize().y/2);
+    update();
+    object.position=pos;
 }
 
 

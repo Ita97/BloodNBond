@@ -16,7 +16,7 @@ private:
 public:
     explicit Message(const std::string &strings=""){
         isOpen=false;
-        name="Old Message";
+        name="Old Scroll";
         invTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/scroll_closed.png");
         texture_close.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/scroll/scroll.png");
         texture_open.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/scroll/message.png");
@@ -44,16 +44,12 @@ public:
     const std::string& getName(){
         return name;
     }
-    bool use(){
-        if(!isOpen){
+    void open(){
+        if(!isOpen) {
             sprite.setTexture(texture_open);
-            isOpen=true;
+            name="Message";
+            isOpen = true;
         }
-        else {
-            sprite.setTexture(texture_close);
-            isOpen=false;
-        }
-        return false;
         //todo add a noise
     };
 };

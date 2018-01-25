@@ -55,13 +55,12 @@ public:
         sprite.setScale(0.4,0.4);
         sprite.setTextureRect(sf::IntRect(50,0,600,550));
     }
-    bool use(){//todo complete
+    void use(){//todo complete
         //if(davanti alla porta giusta) ->openthedoor..
         if(isBroken)
             std::cout<<"E' gia stata usata!";
         else
             isBroken=true;
-        return isBroken;
     }
     keyType getMaterial(){
         return material;
