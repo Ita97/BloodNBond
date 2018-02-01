@@ -38,13 +38,13 @@ void Enemy::move() {
 
     switch(category) {
         case (EnemyType::dragon):
-            speedX=0.6;
+            speedX=0.5;
             speedY=0.35;
             x=190;
             y=200;
             w=190;
             l=200;
-            walkSpeed = 0.011;
+            walkSpeed = 0.012;
             frameCount = 3;
 
             //bound enemy in the window
@@ -75,6 +75,7 @@ void Enemy::move() {
         frame += walkSpeed;
         if (frame >= 3)
             frame = 0;
+        //riordino dei passi
         if (static_cast<int>(frame) == 0) l_frame = 2;
         if (static_cast<int>(frame) == 1) l_frame = 1;
         if (static_cast<int>(frame) == 2) l_frame = 0;

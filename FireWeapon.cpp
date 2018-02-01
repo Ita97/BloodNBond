@@ -16,7 +16,7 @@
 
         case fireWeaponType ::gun:
              name="Gun";
-             bulletSize=sf::Vector2f(15,3);//todo finish
+             bulletSize=sf::Vector2f(15,3);
              ammoMax=20;
              range=sf::Vector2f(300,200/2);
              strength=10;

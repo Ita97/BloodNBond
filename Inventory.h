@@ -185,7 +185,7 @@ void Inventory<T>::setWindowSize(sf::Vector2f windowSize, float max) {
 template <typename T>
 void Inventory<T>::openWindow() {
     inventoryIsOpen=true;
-    if(objectIsUsed())
+    if(object.ptr!= nullptr)
         openObjectWindow();
 }
 

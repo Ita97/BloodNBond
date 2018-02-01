@@ -160,6 +160,7 @@ void Detective::use(Window& window) {
                 else
                     closeNotebook();
             }else {
+
                 medikit.SelectObject(sf::Mouse::getPosition(window.getWindow()));
                 if(medikit.objectIsUsed()){
                     useMedicine(*medikit.getObject());
