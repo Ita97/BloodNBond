@@ -20,4 +20,6 @@ std::string toString(T arg){//trasforma numeri in stringhe
 }
 
 
+
+
 #endif //BLOODBOND_UTILITIES_H
