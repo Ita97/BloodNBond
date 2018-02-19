@@ -11,6 +11,7 @@
 #include "Detective.h"
 #include "Utilities.h"
 #include "Map.h"
+#include "EnemyFactory.h"
 
 class Game {
 public:
@@ -21,15 +22,8 @@ public:
     void update();
     void GameStart();
     void gameLoop();
-    bool checkCollision(sf::Vector2f target, sf::Vector2f collisionArea,sf::Vector2f focus, sf::Vector2f range) {
-        if(focus.x+range.x/2>target.x-collisionArea.x/2 && focus.x-range.x/2<target.x+collisionArea.x/2)
-            if(focus.y+range.y/2>target.y-collisionArea.y/2 && focus.y-range.y/2<target.y+collisionArea.y/2)
-                return true;
-        return false;
-
-    }
+    bool checkCollision(sf::Vector2f target, sf::Vector2f collisionArea,sf::Vector2f focus, sf::Vector2f range);
     void gameBound();
-    //...TODO
 private:
     Window window;
     sf::Clock gameClock;
@@ -38,7 +32,13 @@ private:
     Detective jack;
     Enemy *enemy;
     std::vector<Enemy*> enemyFolder;
-    Map map;
+    EnemyFactory *deadFactory;
+    Map* currencyMap;
+    std::vector<Map*> map;
+    void insertMap(MapType type){
+        currencyMap=new Map(type);
+        map.push_back(currencyMap);
+    }
 
 };
 

@@ -19,15 +19,18 @@ private:
     int ammoMax; //munizioni
     int cartridge;
     float shotSpeed;
-    Bullet bullet;
+    Bullet* bullet;
+    std::vector<Bullet*> shotBullets;
     fireWeaponType f_type;
-
+    sf::Vector2f bulletSize;
+    int num;
 
 public:
     explicit FireWeapon(fireWeaponType t);
-    int use(sf::Vector2f detPosition, int direction) override;
+    int startAttack(sf::Vector2f detPosition, int direction) override;
+    void use() override;
     FireWeapon* clone() override;
-    void reloadCartridge(sf::Vector2f bulletSize, int ammo);
+    void reloadCartridge(int ammo);
     bool isInsideRange(sf::Vector2f focus,sf::Vector2f target);
     void Render(Window &l_window) override;
     sf::Vector2f getCollisionArea() override;

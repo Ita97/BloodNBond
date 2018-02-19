@@ -7,7 +7,7 @@
 #include <iostream>
 #include "FireWeapon.h"
  FireWeapon::FireWeapon(fireWeaponType t): f_type(t) {
-     sf::Vector2f bulletSize;
+     num=0;
      cartridge=0;
      rate=sf::seconds(0.5);
      weaponClock.restart();
@@ -58,12 +58,10 @@
              break;
 
     }
-     reloadCartridge(bulletSize,ammoMax);
+     reloadCartridge(ammoMax);
  }
 
-void FireWeapon::reloadCartridge(sf::Vector2f bulletSize, int ammo) {
-    bullet.setSize(bulletSize);
-
+void FireWeapon::reloadCartridge(int ammo) {
     if(ammo>=ammoMax-cartridge)
         cartridge=ammoMax;
 
@@ -71,23 +69,42 @@ void FireWeapon::reloadCartridge(sf::Vector2f bulletSize, int ammo) {
         cartridge+=ammo;
 }
 
-int FireWeapon::use(sf::Vector2f detPosition, int direction){
+
+void FireWeapon::use(){
+    auto pos=shotBullets.cbegin();
+    for(auto i:shotBullets){
+
+        if (isInsideRange(i->getBeginningPos(), i->getPosition()))
+            i->fire(shotSpeed);
+        else
+            shotBullets.erase(pos);
+        pos++;
+    }
+}
+
+int FireWeapon::startAttack(sf::Vector2f detPosition, int direction){
     sf::Time time;
     time=weaponClock.getElapsedTime();
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && time>rate) {
-        hit=false;
+    if(time>rate) {
         if (cartridge > 0) {
-            bullet.setPosition(detPosition);
+            bullet=new Bullet(direction,detPosition);
+            bullet->setSize(bulletSize);
+            shotBullets.push_back(bullet);
             cartridge--;
 
         } else
             std::cout << "The weapon is without ammo" << std::endl;
         weaponClock.restart();
     }
-    if (isInsideRange(detPosition, bullet.getPosition()))
-        bullet.fire(shotSpeed, direction);
-    else
-        bullet.setPosition(sf::Vector2f(-1000,-1000));
+    auto pos=shotBullets.cbegin();
+    for(auto i:shotBullets){
+
+        if (isInsideRange(detPosition, i->getPosition()))
+            i->fire(shotSpeed);
+        else
+            shotBullets.erase(pos);
+        pos++;
+    }
     return 0;
 }
 
@@ -96,7 +113,8 @@ return new FireWeapon(*this);
 }
 
 void FireWeapon::Render(Window &l_window) {
-   bullet.Render(l_window);
+    for(auto i:shotBullets)
+        i->Render(l_window);
 }
 
 bool FireWeapon::isInsideRange(sf::Vector2f focus, sf::Vector2f target) {
@@ -107,9 +125,14 @@ bool FireWeapon::isInsideRange(sf::Vector2f focus, sf::Vector2f target) {
         if(target.y>focus.y-range.y && target.y<focus.y+range.y) //bound y*/
 
 sf::Vector2f FireWeapon::getCollisionArea() {
-    return bullet.getSize();
+    return bulletSize;
 }
 
 sf::Vector2f FireWeapon::getPosition() {
-    return bullet.getPosition();
+    num++;
+    if(!shotBullets.empty()) {
+        if (num >= shotBullets.size())
+            num = 0;
+        return shotBullets[num]->getPosition();
+    }
 }

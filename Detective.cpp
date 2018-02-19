@@ -9,6 +9,7 @@ bool isHold=false;
 
 Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y, Weapon* w):
         name(name), Character(h, x, y, w), sanityPoint(sp), abilityPoint(ap){
+    key=keyType::null;
     notebook.setWindowSize(sf::Vector2f(30, 100),780);
     notebook.setName(" Notebook");
     keychain.setWindowSize(sf::Vector2f(60, 100),810);
@@ -28,16 +29,17 @@ Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y
     frame=0;
     walk=0;
     attackFrame=0;
-    collisionArea=sf::Vector2f(50,50);
     fight=false;
+    collisionArea=sf::Vector2f(30,50);
+    walkingArea=sf::Vector2f(30,30);
 }
 
 
 void Detective::move() {
 
-    float walkSpeed=0.1;
+    float walkSpeed=0.15;
     int frameCount=9;
-    float speedX=0.70, speedY=0.47;
+    float speedX=1, speedY=0.8;
     int x=129, y=183, w=120, l=170;
 
 
@@ -91,10 +93,13 @@ void Detective::attack() {
     sf::Vector2i size(120,170),distance(129,185);
     float attackSpeed=0.15;
     int frameCount=6;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
-        fight=true;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+        fight = true;
+    }
     if (weapon != nullptr) {
-        weapon->use(getPosition(), walk);
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+            weapon->startAttack(getPosition(),walk);
+        weapon->use();
         weapon->getTextureDetails(size,distance,frameCount);
     }
     if (attackFrame >= frameCount) {
@@ -187,9 +192,9 @@ void Detective::use(Window& window) {
                     notebook.update();
                 }
                 keychain.SelectObject(sf::Mouse::getPosition(window.getWindow()));
-                if(keychain.objectIsUsed())
-                    keychain.getObject()->use();
-
+                if(keychain.objectIsUsed()) {
+                    key=keychain.getObject()->getMaterial();
+                }
 
             }
         }
@@ -247,9 +252,17 @@ void Detective::getKey(Key &key) {
         std::cout<<"Non puoi portarla con te";
 }
 
+
+void Detective::interact(Obstacle *obs) {
+    if(obs->isUnlockable()){
+        obs->unlock(key);
+    }
+}
+
 //Rendering
 
 void Detective::Render(Window& l_window){
+    isRender=true;
     l_window.Draw(sprite);
     if(weapon!=nullptr)
         weapon->Render(l_window);
@@ -260,4 +273,8 @@ void Detective::RenderInventory(Window& l_window){
     keychain.Render(l_window);
     notebook.Render(l_window);
 
+}
+
+sf::Vector2f Detective::getFeetPosition() {
+    return {posX, posY+20};
 }

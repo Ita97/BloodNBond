@@ -13,12 +13,13 @@ class Character {
 public:
     Character(const Character& original);
     explicit Character(int h, int x=0, int y=0, Weapon* w= nullptr):
-            hp(h),posX(x),posY(y), weapon(w){}
+            hp(h),posX(x),posY(y), weapon(w){
+        isRender=false;
+    }
 
     virtual ~Character()= default;
 
     virtual void move()=0;
-    virtual void attack()=0;
 
     virtual void Render(Window& l_window)=0;
 
@@ -48,7 +49,7 @@ public:
         sprite.setPosition(posX,pos);
     }
     sf::Vector2f getPosition(){
-        return sf::Vector2f(posX,posY);
+        return {posX,posY};
     }
     void setPosition(sf::Vector2f position){
         posX=position.x;
@@ -64,15 +65,34 @@ public:
     int getDirection(){
         return walk;
     }
+    sf::Vector2f getWalkingArea(){
+        return walkingArea;
+    }
+    sf::Vector2f getAttackRange(){
+        return weapon->getCollisionArea();
+    }
+    sf::Vector2f getAttackPosition(){
+        return weapon->getPosition();
+    }
+    virtual sf::Vector2f getFeetPosition()=0;
+    void resetRender(){
+        isRender=false;
+    }
+    bool getRender(){
+        return isRender;
+    }
 protected:
     sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f collisionArea;
+    sf::Vector2f walkingArea;
     int hp;
     float frame;
     float posX, posY;
     Weapon* weapon;
     int walk;
+    bool isRender;
+
 
 };
 

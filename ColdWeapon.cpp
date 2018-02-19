@@ -45,13 +45,13 @@ ColdWeapon::ColdWeapon(coldWeaponType t) : c_type(t){
             break;
     }
 }
+void ColdWeapon::use(){}
 
-
-int ColdWeapon::use(sf::Vector2f detPosition, int direction){
+int ColdWeapon::startAttack(sf::Vector2f detPosition, int direction){
     position=detPosition;
     sf::Time time;
     time=weaponClock.getElapsedTime();
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&time>rate)
+    if(time>rate)
         weaponClock.restart();
     return 0;
 }
@@ -59,9 +59,7 @@ ColdWeapon* ColdWeapon::clone(){
     return new ColdWeapon(*this);
 }
 
-void ColdWeapon::Render(Window &l_window) {
-    //todo add attack-sprite
-}
+void ColdWeapon::Render(Window &l_window) {}
 
 sf::Vector2f ColdWeapon::getCollisionArea() {
     return range;

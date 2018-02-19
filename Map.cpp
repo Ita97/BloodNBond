@@ -4,60 +4,124 @@
 
 #include "Map.h"
 
-void Map::create(sf::Vector2f position) {
-
+void Map::create() {
+    float x,y;
     switch(type){
+
+
         case MapType::courtyard:
-            for(int i=0; i<width*lenght;i++) {
-                tile = new Tile(TileType::grass);
-                tilesVector.push_back(tile);
+
+            width=4; lenght=4;
+            for(int i=0; i<lenght;i++) {
+                for (int k = 0; k < width; k++){
+                    x=pos.x-width*tileSize.x/2 + k * tileSize.x;
+                    y=pos.y-lenght*tileSize.y/2 + i * tileSize.y;
+
+                    tile = new Tile(TileType::grass);
+                    tile->setPosition(x,y);
+                    tilesVector.push_back(tile);
+                }
             }
-            obstacle= new Obstacle(ObstacleType::tree,0,300,200);
-            obsVector.push_back(obstacle);
-            obstacle=new Obstacle(ObstacleType::tree,2,670,400);
-            obsVector.push_back(obstacle);
+
+            //set obstacles
+            insertObstacle(1,1,ObstacleType::tree);
+            insertObstacle(3,2,ObstacleType::tree,2);
+
             break;
+
+
+        case MapType ::frontyard:
+
+            width=4; lenght=3;
+            pos.y=320;
+
+            for(int i=0; i<lenght;i++) {
+                for (int k = 0; k < width; k++){
+                    x=pos.x-width*tileSize.x/2 + k * tileSize.x;
+                    y=pos.y-lenght*tileSize.y/2 + i * tileSize.y;
+
+                    tile = new Tile(TileType::grass);
+                    tile->setPosition(x,y);
+                    tilesVector.push_back(tile);
+                }
+            }
+
+            //set obstacles
+            insertObstacle(2,0,ObstacleType::null);
+            insertObstacle(0,0,ObstacleType::null);
+            insertObstacle(3,0,ObstacleType::null);
+            insertObstacle(1,0,ObstacleType::building);
+            break;
+
+
         case MapType::mansion :
+
+            width=4; lenght=4;
+
             for(int i=0;i<width;i++){
+                x=pos.x-width*tileSize.x/2 + i * tileSize.x;
+                y=pos.y-lenght*tileSize.y/2;
+
                 tile=new Tile(TileType::wall);
+                tile->setPosition(x,y);
                 tilesVector.push_back(tile);
+                insertObstacle(i,0,ObstacleType::null);
             }
-            for(int i=width;i<width*lenght;i++){
-                tile=new Tile(TileType::floor);
-                tilesVector.push_back(tile);
+            for(int i=1;i<lenght;i++){
+                for (int k = 0; k < width; k++){
+                    x=pos.x-width*tileSize.x/2 + k * tileSize.x;
+                    y=pos.y-lenght*tileSize.y/2 + i * tileSize.y;
+
+                    tile=new Tile(TileType::floor);
+                    tile->setPosition(x,y);
+                    tilesVector.push_back(tile);
+                }
             }
+            //set obstacles
+            insertObstacle(0,1,ObstacleType::forniture); //table
             break;
+
+
         case MapType ::cemetery:
-            for(int i=0; i<width*lenght;i++) {
-                tile = new Tile(TileType::grass);
-                tilesVector.push_back(tile);
+            width=4; lenght=4;
+
+            for(int i=0; i<lenght;i++) {
+                for (int k = 0; k < width; k++){
+                    x=pos.x-width*tileSize.x/2 + k * tileSize.x;
+                    y=pos.y-lenght*tileSize.y/2 + i * tileSize.y;
+
+                    tile = new Tile(TileType::dark);
+                    tile->setPosition(x,y);
+                    tilesVector.push_back(tile);
+                }
             }
-            obstacle= new Obstacle(ObstacleType::deadTree,0,300,200);
-            obsVector.push_back(obstacle);
-            obstacle=new Obstacle(ObstacleType::deadTree,2,670,400);
-            obsVector.push_back(obstacle);
-            obstacle=new Obstacle(ObstacleType::grave,0,150,300);
-            obsVector.push_back(obstacle);
+            //set obstacles
+            insertObstacle(1,1,ObstacleType::deadTree);
+            insertObstacle(3,2,ObstacleType::deadTree,2);
+            insertObstacle(3,0,ObstacleType::deadTree,1);
+            insertObstacle(0,2,ObstacleType::grave);
+
             break;
     }
-    pos=position;
-    firstTile.x=position.x-width*tile->getSize().x/2;
-    firstTile.y=position.y-lenght*tile->getSize().y/2;
 
-    float x,y;
-    for(int i=0; i<lenght;i++) {
-        for (int k = 0; k < width; k++){
-            x=firstTile.x + k * tilesVector[i+k]->getSize().x;
-            y=firstTile.y + i * tilesVector[i+k]->getSize().y;
-            tilesVector[i*width+k]->setPosition(x,y);
 
+    visit=true;
+}
+
+void Map::update() {
+    auto pos=obsVector.cbegin();
+    for(auto i:obsVector){
+        if(i->isUnlockable()&&i->isOpen()) {
+            sf::Vector2i tile=getTile(i->getPosition());
+            insertObstacle(tile.x,tile.y,i->getType(),1);
+            obsVector.erase(pos);
         }
+         pos++;
     }
 }
 
+
 void Map::Render(Window &window) {
     for(auto i:tilesVector)
-        i->Render(window);
-    for(auto i:obsVector)
         i->Render(window);
 }

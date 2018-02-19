@@ -31,8 +31,8 @@ public:
    const std::string &getName() const{
         return name;
     }
-
-    virtual int use(sf::Vector2f detPosition, int direction)=0;
+    virtual void use()=0;
+    virtual int startAttack(sf::Vector2f detPosition, int direction)=0;
     bool checkCollision(sf::Vector2f target, sf::Vector2f collisionArea,sf::Vector2f focus, sf::Vector2f range=sf::Vector2f(0,0));
 
     int getStrength() const {
@@ -61,6 +61,9 @@ public:
         frameNumber=frameCount;
     }
     virtual sf::Vector2f getPosition()=0;
+    sf::Vector2f getRange(){
+        return range;
+    }
 };
 
 

@@ -13,6 +13,7 @@
 #include "Window.h"
 #include "Key.h"
 #include "Message.h"
+#include "Obstacle.h"
 #include <SFML/Graphics.hpp>
 
 
@@ -23,9 +24,11 @@ public:
     Detective& operator =(const Detective &right);
 
     void move() override;
-    void attack() override;
+    void attack();
     void use(Window& window);
-
+    void update(){
+        key=keyType ::null;
+    }
     int getSanity() const{
         return sanityPoint;
     }
@@ -83,18 +86,15 @@ public:
     const Weapon& getWeapon(){
         return *weapon;
     }
-    sf::Vector2f getAttackRange(){
-        return weapon->getCollisionArea();
-    }
-    sf::Vector2f getAttackPosition(){
-        return weapon->getPosition();
-    }
+
 
     int getAttackPower(){
         if(weapon!= nullptr)
             return weapon->getStrength();
         return 1;
     }
+    sf::Vector2f getFeetPosition() override;
+    void interact(Obstacle* obs);
 private:
     std::string name;
     int sanityPoint;
@@ -104,6 +104,7 @@ private:
     Inventory<Medicine> medikit;
     Inventory<Key> keychain;
     Inventory<Message> notebook;
+    keyType key;
 
 
 

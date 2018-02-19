@@ -50,7 +50,6 @@ public:
             name="Message";
             isOpen = true;
         }
-        //todo add a noise
     };
 };
 
