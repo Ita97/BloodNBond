@@ -7,7 +7,6 @@
 
 
 #include <SFML/Graphics.hpp>
-#include "Window.h"
 #include "Key.h"
 
 enum class ObstacleType{deadTree, tree, grave, forniture, woodpile, building, null};
