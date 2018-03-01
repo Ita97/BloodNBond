@@ -5,8 +5,6 @@
 #ifndef BLOODBOND_BULLET_H
 #define BLOODBOND_BULLET_H
 
-
-#include "Window.h"
 #include <SFML/Graphics.hpp>
 
 class Bullet {
@@ -31,7 +29,7 @@ public:
     void setPosition(sf::Vector2f position){
         bullet.setPosition(position);
     }
-    void Render(Window& l_window);
+    void Render(sf::RenderWindow& l_window);
     sf::Vector2f getBeginningPos(){
         return beginningPos;
     }
