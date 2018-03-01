@@ -1,24 +1,32 @@
 //
 // Created by ita on 30/08/17.
 //
-
 #include "Game.h"
 #include "FireWeapon.h"
 #include "ColdWeapon.h"
 
-Game::Game():window("Blood&Bond", sf::Vector2u(960,480)),jack("Jack",10,10,10,480,240, nullptr),detStatus("Jack HP:",old,25),
-enemyStatus("Dragon HP: ",old,25){
+Game::Game():window(sf::VideoMode(960,480),"Blood&Bonds"),jack("Jack",50,50,480,240, nullptr),text("",old){
 
 
-    msg.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
-    old.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/1942.ttf");
+    msg.loadFromFile("./Font/BeautyDemo.ttf");
+    old.loadFromFile("./Font/1942.ttf");
 
-    detStatus.setPosition(7,2);
-    detStatus.setFillColor(sf::Color::Black);
-    detStatus.setCharacterSize(25);
-    enemyStatus.setPosition(7,33);
-    enemyStatus.setFillColor(sf::Color::Black);
-    enemyStatus.setCharacterSize(25);
+    boxOpen_1=false;
+    boxOpen_2=false;
+    round_1=false;
+    round_2=false;
+    text.setPosition(200,0);
+    text.setFillColor(sf::Color::Red);
+    text.setCharacterSize(25);
+
+    home.loadFromFile("./texture/menù/home.jpg");
+    credit.loadFromFile("./texture/menù/cemetery.png");
+    sprite.setTexture(home);
+    sprite.setOrigin(home.getSize().x/2,home.getSize().y/2);
+
+    sprite.setPosition(window.getSize().x/2,window.getSize().y/2);
+    sprite.scale(0.8,0.6);
+
 
     insertMap(MapType::mansion);   //0
     insertMap(MapType::frontyard); //1
@@ -27,83 +35,109 @@ enemyStatus("Dragon HP: ",old,25){
 
 }
 
+void Game::handelInput() {
+    sf::Event event;
+    while(window.pollEvent(event)){
+        if(event.type== sf::Event::Closed)
+            window.close();
+        if(event.type==sf::Event::KeyPressed){
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+                GameStart();
+        }
+    }
+}
+
 void Game::update() {
+
     jack.resetRender();
-    jack.update();
+    jack.reload();
     for(auto i:enemyFolder)
         i->resetRender();
     currencyMap->update();
+    if(gameClock.getElapsedTime()-txtTime>sf::seconds(1)){
+        text.setString("");
+        text.setPosition(200,0);
+        text.setCharacterSize(25);
+        text.setFont(old);
     }
+}
 
-void Game::gameLoop() {
-    GameStart();
-    gameClock.restart();
+void Game::GameStart(){
+    while(window.isOpen()) {
+        handelInput();
+        window.clear();
+        window.draw(sprite);
+        window.display();
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+            GameLoop();
 
-    sf::RectangleShape rectangle(sf::Vector2f(220, 70));
-    rectangle.setFillColor(sf::Color::Red);
-    rectangle.setPosition(1, 1);
+    }
+}
 
-    currencyMap->create();
+void Game::GameLoop() {
+    initialize();
 
-    Medicine *potion, *aspirin;
-    potion= new Medicine(7,medType::sp);
-    aspirin= new Medicine(3, medType::hp);
-    Key* MansionKey;
-    MansionKey=new Key(keyType::skeleton);
-    Message* clue;
-    clue= new Message();
-    std::string content="The answer is \ninside your heArt";
-    clue->setContent(content);
-    Weapon *magnum, *ritualKnife;
-    magnum=new FireWeapon(fireWeaponType::gun);
-    ritualKnife= new ColdWeapon(coldWeaponType::sword);
+    Medicine *potion, *elixir;
+    potion = new Medicine(7, medType::sp);
+    elixir = new Medicine(10, medType::hp);
+    Key *MansionKey;
+    MansionKey = new Key(keyType::skeleton);
+    Weapon *revolver, *oldSword;
+    revolver = new FireWeapon(fireWeaponType::gun);
+    oldSword = new ColdWeapon(coldWeaponType::sword);
 
-    jack.setWeapon(magnum);
-    jack.getMedicine(*potion);
-    jack.getMedicine(*aspirin);
-    jack.getKey(*MansionKey);
-    jack.getMessage(*clue);
-    while (!window.IsDone()){
-        window.Update();
+
+    while (window.isOpen()){
+        handelInput();
         update();
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q))
-            jack.throwWeapon();
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R))
-            jack.setWeapon(ritualKnife);
 
         jack.use(window);
-
-
-        // movement
-        window.BeginDraw();
-        currencyMap->Render(window);
-
         jack.move();
         jack.attack();
+        if(jack.getHp()<=0||jack.getSanity()<=0){
+            text.setPosition(window.getSize().x/2-30,window.getSize().y/2);
+            text.setCharacterSize(50);
+            text.setString("You Lose!");
+            end();
+        }
+
+        // movement
+        window.clear();
+        currencyMap->Render(window);
+
+
+
 
         auto pos=enemyFolder.cbegin();
         for(auto i: enemyFolder) {
             //check if detective attack works
-            if(jack.isFighting()&&!i->hit){//todo use hit with weapon not with enemy
+            if(jack.ready()){
                 if(checkCollision(i->getPosition(),i->getCollisionArea(),jack.getAttackPosition(),jack.getAttackRange())){
                     i->damage(jack.getAttackPower());
-                    i->hit=true;
+                    jack.hit();
                 }
             }
-            else if(!jack.isFighting())
-                    i->hit=false;
+
 
             if(checkCollision(jack.getPosition(),jack.getCollisionArea(),i->getPosition(),i->getRange())){
                 i->attack(jack);
-                if(checkCollision(jack.getPosition(),jack.getCollisionArea(),i->getAttackPosition(),i->getAttackRange()))
-                    jack.damage(i->getStrength());
+                if (i->ready()&&checkCollision(jack.getPosition(), jack.getCollisionArea(), i->getAttackPosition(),
+                                   i->getAttackRange())) {
+                    i->hit();
+                    if (i->isSniper())
+                        jack.getMad(i->getStrength());
+                    else
+                        jack.damage(i->getStrength());
+                }
             }
             else
                 i->move(jack);
 
 
-            if(i->getHp()<=0)
+            if(i->getHp()<=0){
+                delete i;
                 enemyFolder.erase(pos);
+            }
 
             pos++;
         }
@@ -115,34 +149,71 @@ void Game::gameLoop() {
                 if (!currencyMap->isVisited()) {
                     currencyMap->create();
                     deadFactory=new EnemyFactory(EnemyType::skeleton,level ::low,currencyMap->getTilePosition(0,2));
-
-
+                                    //posiziono la factory nel tile[0][2]
                 }
                 jack.setPosX(window.getSize().x);
             }
-            if(jack.getPosition().y < 0) {
+            else if(jack.getPosition().y < 0) {
                 currencyMap=map[1];//frontyard
                 if(!currencyMap->isVisited())
                     currencyMap->create();
                 jack.setPosY(window.getSize().y);
 
             }
+            if(currencyMap->getObstacle()[currencyMap->getObstacle().size()-1]->isOpen()&&!boxOpen_1){
+                boxOpen_1=true;
+                jack.setWeapon(oldSword);
+                jack.getMedicine(*potion);
+                jack.getMedicine(*elixir);
+            }
         }
         else if(currencyMap->getType()==MapType::cemetery){
-            if(deadFactory!= nullptr){
+            if(!round_1){
                 enemyFolder.push_back(deadFactory->CreateEnemy(Behavior::sniper));
                 enemyFolder.push_back(deadFactory->CreateEnemy(Behavior::berserk));
-                deadFactory= nullptr;
+                round_1=true;
+                text.setPosition(window.getSize().x/2,window.getSize().y/2);
+                text.setCharacterSize(40);
+                text.setString("Round 1");
+                txtTime=gameClock.getElapsedTime();
+                for(auto en:enemyFolder)
+                    en->subscribe(&jack);
             }
+            else if(!round_2&&enemyFolder.empty()){
+                enemyFolder.push_back(deadFactory->CreateEnemy(Behavior::sniper));
+                delete deadFactory;
+                deadFactory= nullptr;
+                deadFactory=new EnemyFactory(EnemyType::skeleton,level::medium,currencyMap->getTilePosition(3,0));
+                enemyFolder.push_back(deadFactory->CreateEnemy(Behavior::berserk));
+                enemyFolder.push_back(deadFactory->CreateEnemy(Behavior::sniper));
+                round_2=true;
+                delete deadFactory;
+                deadFactory= nullptr;
+                text.setPosition(window.getSize().x/2,window.getSize().y/2);
+                text.setCharacterSize(40);
+                text.setString("Round 2");
+                txtTime=gameClock.getElapsedTime();
+                for(auto en:enemyFolder)
+                    en->subscribe(&jack);
+            }
+
             if(jack.getPosX()>window.getSize().x) {
                 if (enemyFolder.empty()) {
                     currencyMap = map[3];//courtyard
                     if (!currencyMap->isVisited())
                         currencyMap->create();
                 }
-                else
-                    std::cout<<"A strange force doesn't allow you to escape!"<<std::endl;
+                else {
+                    text.setString("A strange force doesn't \n  allow you to escape");
+                    txtTime=gameClock.getElapsedTime();
+                }
                 jack.setPosX(0);
+            }
+
+            if(currencyMap->getObstacle()[currencyMap->getObstacle().size()-1]->isOpen()&&!boxOpen_2){
+                boxOpen_2=true;
+                jack.setWeapon(revolver);
+                jack.getKey(*MansionKey);
             }
         }
         else if(currencyMap->getType()==MapType::frontyard){
@@ -151,16 +222,20 @@ void Game::gameLoop() {
                 if (!currencyMap->isVisited())
                     currencyMap->create();
                 jack.setPosY(0);
-            }
-            if(jack.getPosition().y-jack.getCollisionArea().y/2<=100){
-                currencyMap=map[0];
-                if (!currencyMap->isVisited())
+            }else if(jack.getPosition().y-jack.getCollisionArea().y/2<=100){
+                currencyMap=map[0];//mansion
+                if (!currencyMap->isVisited()) {
                     currencyMap->create();
+
+                }
                 jack.setPosY(window.getSize().y);
             }
         }
         else if(currencyMap->getType()==MapType::mansion){
-            //fineeee
+            text.setPosition(window.getSize().x/2-30,window.getSize().y/2);
+            text.setCharacterSize(50);
+            text.setString("You Win!");
+            end();
         }
 
 
@@ -169,7 +244,11 @@ void Game::gameLoop() {
         //Render
         for(auto i: currencyMap->getObstacle()){
             if(checkCollision(i->getCenterPosition(),i->getCollisionArea(),jack.getPosition(),jack.getCollisionArea())) {//det & obs
-                jack.interact(i);
+                if(i->isUnlockable()) {
+                    jack.interact(i);//se entra nella sua collision area può interagire con gli oggetti
+                    text.setString(i->getAction());
+                    txtTime=gameClock.getElapsedTime();
+                }
                 if (jack.getPosY() < i->getPosition().y)
                     jack.Render(window);
             }
@@ -193,16 +272,10 @@ void Game::gameLoop() {
         }
         if(!jack.getRender())
             jack.Render(window);
-        detStatus.setString("Jack HP: "+toString<int>(jack.getHp()));
-        window.Draw(rectangle);
-        window.Draw(detStatus);
         jack.RenderInventory(window);
-        window.EndDraw();
+        window.draw(text);
+        window.display();
     }
-}
-
-void Game::GameStart(){
-    //screen home
 }
 
 void Game::gameBound() {
@@ -263,4 +336,24 @@ bool Game::checkCollision(sf::Vector2f target, sf::Vector2f collisionArea, sf::V
             return true;
     return false;
 
+}
+
+void Game::initialize() {
+    gameClock.restart();
+    if(!currencyMap->isVisited())
+        currencyMap->create();
+
+}
+
+void Game::end(){
+    while(window.isOpen()) {
+        handelInput();
+        window.clear();
+        window.draw(sprite);
+        window.draw(text);
+        window.display();
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+            window.close();
+
+    }
 }
