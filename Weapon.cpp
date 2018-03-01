@@ -1,7 +1,6 @@
 //
 // Created by ita on 14/09/17.
 //
-
 #include "Weapon.h"
 
 bool Weapon::checkCollision(sf::Vector2f target, sf::Vector2f collisionArea,sf::Vector2f focus, sf::Vector2f range) {
@@ -14,4 +13,10 @@ bool Weapon::checkCollision(sf::Vector2f target, sf::Vector2f collisionArea,sf::
 
 const sf::Texture& Weapon::getTexture(){
     return texture;
+}
+
+void Weapon::getTextureDetails(sf::Vector2i &size, sf::Vector2i &distance, int &frameNumber) {
+    size=textureSize;
+    distance=frameDistance;
+    frameNumber=frameCount;
 }
