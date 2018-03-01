@@ -16,7 +16,7 @@ Character& Character::operator=(const Character &right) {
 
 
 Character& Character::copier(const Character &original) {
-    hp=original.hp;
+    healtPoint=original.healtPoint;
     posY=original.posY;
     posX=original.posX;
     if(original.weapon!= nullptr)
