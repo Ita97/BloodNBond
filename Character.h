@@ -8,7 +8,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Weapon.h"
 #include "Medicine.h"
-#include "Window.h"
+
 class Character {
 public:
     Character(const Character& original);
