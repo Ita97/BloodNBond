@@ -6,7 +6,7 @@
 Character& Character::operator=(const Character &right) {
     if(this != &right) {
         if(weapon != nullptr)
-            delete[] weapon;
+            delete weapon;
         copier(right);
     }
     return *this;
