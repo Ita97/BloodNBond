@@ -20,7 +20,7 @@ public:
     int startAttack(sf::Vector2f detPosition, int direction) override;
     void use() override;
     ColdWeapon* clone() override;
-    void Render(Window &l_window) override;
+    void Render(sf::RenderWindow &l_window) override;
     sf::Vector2f getCollisionArea() override;
     sf::Vector2f getPosition() override;
 };
