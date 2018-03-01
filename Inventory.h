@@ -15,7 +15,6 @@ struct Object{
 #include <vector>
 #include <algorithm>
 #include <SFML/Graphics.hpp>
-#include "Window.h"
 
 
 template <typename T>
@@ -86,24 +85,23 @@ public:
     const sf::Vector2f getCollisionArea(){
         return collisionArea;
     }
-    const sf::Vector2f getPosition(){
-        float x=inventoryWindow.getPosition().x+inventoryWindow.getSize().x-collisionArea.x;
-        float y=inventoryWindow.getPosition().y+collisionArea.y;
-        return sf::Vector2f(x,y);
+    const sf::Vector2f getPosition();
+    void reset(){
+        elements.clear();
+        object.ptr= nullptr;
     }
-
-    void Render(Window& l_window);
+    void Render(sf::RenderWindow& l_window);
 };
 //Methods Definition
 
 template <typename  T>
 Inventory<T>::Inventory(const std::string &name, std::vector<T> chest)
         : elements(chest){
-    objectWindow_txt.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/object_description.png");
+    objectWindow_txt.loadFromFile("./texture/inventory/object_description.png");
     objectWindow.setTexture(objectWindow_txt);
     objectWindow.setPosition(10,10);
 
-    inventoryBox.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/inventory_box.png");
+    inventoryBox.loadFromFile("./texture/inventory/inventory_box.png");
     inventoryIsOpen=false;
     objectWindowIsOpen=false;
     scroll=windowSize.x;
@@ -114,8 +112,8 @@ Inventory<T>::Inventory(const std::string &name, std::vector<T> chest)
     inventoryWindow.setOutlineThickness(2);
     inventoryWindow.setOutlineColor(sf::Color(101,67,33)); //dark brown color
 
-    font1.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/BeautyDemo.ttf");
-    font2.loadFromFile("/home/ita/CLionProjects/BloodBond/Font/1942.ttf");
+    font1.loadFromFile("./Font/BeautyDemo.ttf");
+    font2.loadFromFile("./Font/1942.ttf");
     inventoryName.setFont(font1);
     inventoryName.setFillColor(sf::Color(101,67,33));
     setName(name);
@@ -197,28 +195,28 @@ void Inventory<T>::closeWindow() {
 
 
 template <typename T>
-void Inventory<T>::Render(Window &l_window) {
+void Inventory<T>::Render(sf::RenderWindow &l_window) {
 
     inventoryName.setPosition(scroll-inventoryName.getCharacterSize(), inventoryWindow.getPosition().y+windowSize.y);
-    l_window.Draw(inventoryWindow);
-    l_window.Draw(inventoryName);
+    l_window.draw(inventoryWindow);
+    l_window.draw(inventoryName);
 
     if(inventoryIsOpen&&scroll<WindowMaxSize)
-        scroll+=6;
+        scroll+=10;
     else if(inventoryIsOpen && scroll>=WindowMaxSize)
         for(auto& i:box)
-            l_window.Draw(i);
+            l_window.draw(i);
     else if(!inventoryIsOpen&& scroll>windowSize.x)
-        scroll-=6;
+        scroll-=7;
     else if(!inventoryIsOpen&& scroll <=windowSize.x)
         scroll=windowSize.x;
 
     inventoryWindow.setSize(sf::Vector2f(scroll,windowSize.y));
     if(objectWindowIsOpen){
-        l_window.Draw(objectWindow);
-        l_window.Draw(object.ptr->getSprite());
-        l_window.Draw(object.description);
-        l_window.Draw(object.name);
+        l_window.draw(objectWindow);
+        l_window.draw(object.ptr->getSprite());
+        l_window.draw(object.description);
+        l_window.draw(object.name);
     }
 
 }
@@ -232,12 +230,18 @@ void Inventory<T>::setName(const std::string &string) {
 
 template <typename  T>
 void Inventory<T>::SelectObject(sf::Vector2i mousePosition) {
-    if(inventoryIsOpen)
-        for(int i=0;i<8;i++)
-            if(isInsideArea(mousePosition,box[i].getPosition(),sf::Vector2f(inventoryBox.getSize().x/2,inventoryBox.getSize().y/2))) {//inserisci funzione bool isInsideBox();
+    if(inventoryIsOpen){
+        int i=0;
+        for(auto e:elements) {
+            if (isInsideArea(mousePosition, box[i].getPosition(),
+                             sf::Vector2f(inventoryBox.getSize().x / 2, inventoryBox.getSize().y / 2))) {
                 setObject(i);
                 displayObjectWindow(i);
+
             }
+            i++;
+        }
+    }
     if(objectWindowIsOpen) {
         if (isInsideArea(mousePosition, sf::Vector2f(objectWindow.getPosition().x+objectWindow_txt.getSize().x - 10,
                                                      objectWindow.getPosition().y + 10), sf::Vector2f(10, 10))) {
@@ -266,5 +270,11 @@ void Inventory<T>::setObject(int pos) {
     object.position=pos;
 }
 
+template <typename  T>
+const sf::Vector2f Inventory<T>::getPosition() {
+    float x=inventoryWindow.getPosition().x+inventoryWindow.getSize().x-collisionArea.x;
+    float y=inventoryWindow.getPosition().y+collisionArea.y;
+    return sf::Vector2f(x,y);
+}
 
 #endif //BLOODBOND_INVENTORY_H
