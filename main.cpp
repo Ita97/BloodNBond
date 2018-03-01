@@ -7,7 +7,7 @@
 
 int main() {
     Game game;
-    game.gameLoop();
+    game.GameStart();
 
     return 0;
 }
