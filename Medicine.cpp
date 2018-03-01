@@ -10,7 +10,7 @@ Medicine::Medicine(int value, medType type) : type(type){
         case (medType ::hp):
             string="healt problems.";
             points="Healt";
-            if(value<5) {
+            if(value<10) {
                 name = "Beryllium-Conyxa";
                 texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/medicine/beryllium.png");
                 invTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/beryllium.png");
@@ -25,7 +25,7 @@ Medicine::Medicine(int value, medType type) : type(type){
         case(medType::sp):
             string="psychic trauma.";
             points="Sanity";
-            if(value<5){
+            if(value<10){
                 name="Antimon-Conyxa";
                 texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/medicine/antimon.png");
                 invTexture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/inventory/antimon.png");
