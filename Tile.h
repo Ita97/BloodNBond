@@ -5,10 +5,8 @@
 #ifndef BLOODBOND_TILE_H
 #define BLOODBOND_TILE_H
 
-
-#include <SFML/Graphics.hpp>
-#include "Window.h"
 #include "Obstacle.h"
+#include <SFML/Graphics.hpp>
 
 enum class TileType{dark, grass, floor, wall, land};
 
@@ -20,37 +18,19 @@ private:
     Obstacle* obstacle;
 
 public:
-    Tile(TileType type){
-        obstacle= nullptr;
-        size.x=256;
-        size.y=153,33;
-        switch(type){
-            case TileType::floor:
-                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/map/brick.png");
-                break;
-            case TileType::grass:
-                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/map/grass.png");
-                break;
-            case TileType:: wall:
-                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/map/wall.png");
-                break;
-            case TileType ::land:
-                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/map/dirt.png");
-                break;
-            case TileType ::dark:
-                texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/map/blackGrass.jpg");
-        }
-        sprite.setTexture(texture);
-    }
+    explicit Tile(TileType type);
     ~Tile(){
         delete obstacle;
     }
     void setObstacle(Obstacle* obs){
+        delete obstacle;
         obstacle=obs;
         obstacle->setPosition(getPosition());
     }
-    Obstacle* getObstacle(){
-        return obstacle;
+    ObstacleType getObstacle(){
+        if(obstacle!= nullptr)
+            return obstacle->getType();
+        return ObstacleType ::null;
     }
     void setPosition(float x, float y){
         sprite.setPosition(x, y);
@@ -58,8 +38,8 @@ public:
     sf::Vector2f getPosition(){
         return {sprite.getPosition().x+size.x/2,sprite.getPosition().y+size.y/2};
     }
-    void Render(Window& window){
-        window.Draw(sprite);
+    void Render(sf::RenderWindow& window){
+        window.draw(sprite);
     }
     sf::Vector2f getSize(){
         return size;
