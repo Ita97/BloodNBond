@@ -1,7 +1,6 @@
 //
 // Created by ita on 01/11/17.
 //
-
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include "Enemy.h"
@@ -12,32 +11,31 @@
 
 Enemy::Enemy(int hp, int x, int y, int stg, EnemyType type,Behavior behavior): Character(hp, x, y),
                 strength(stg), category(type),behavior(behavior){
-    hit=false;
     fight=false;
+    range = sf::Vector2f(60, 50);
 
-    if(isSniper()){
-        weapon= new FireWeapon(fireWeaponType::gun);
-        range=weapon->getRange();
-    }
-    else if(isBerserker()){
-        weapon=new ColdWeapon(coldWeaponType::sword);
-        range=weapon->getRange();
-    }else range=sf::Vector2f(60,60);
+
     switch(category) {
         case (EnemyType::dragon):
-            texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/enemy/dragon.png");//todo make texture better
-            fireBall_t.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/enemy/fire_red.png");
+            texture.loadFromFile("./texture/enemy/dragon.png");//todo make texture better
+            fireBall_t.loadFromFile("./texture/enemy/fire_red.png");
             sprite.setTextureRect(sf::IntRect(190, 200, 190, 200));//intRect(left, top, width, length)
             sprite.setOrigin(190/2,120);
             frame = 1;
             walk=1;
             collisionArea=sf::Vector2f(100,200);
             walkingArea=sf::Vector2f(50,100);
+            speed.x=0.5;
+            speed.y=0.35;
+            frameSize=sf::Vector2i(190,200);
+            size=frameSize;
+            walkSpeed = 0.012;
+            frameCount = 3;
             break;
 
         case (EnemyType::skeleton):
-            texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/enemy/skeleton.png");
-            fireBall_t.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/enemy/fire_blue.png");
+            texture.loadFromFile("./texture/enemy/skeleton.png");
+            fireBall_t.loadFromFile("./texture/enemy/fire_blue.png");
             texture.setSmooth(true);
             sprite.scale(1.6,1.6);
             sprite.setTextureRect(sf::IntRect(0,0,65,65));
@@ -45,10 +43,34 @@ Enemy::Enemy(int hp, int x, int y, int stg, EnemyType type,Behavior behavior): C
             sprite.setColor(sf::Color(255,255,255,100));
             frame=0;
             walk=0;
-            collisionArea=sf::Vector2f(40,60);
+            collisionArea=sf::Vector2f(50,60);
             walkingArea=sf::Vector2f(35,30);
+            speed.x=0.5;
+            speed.y=0.35;
+            frameSize=sf::Vector2i(64,88);
+            size=sf::Vector2i(65,65);
+            walkSpeed=0.1;
+            frameCount=9;
             break;
     }
+    if(isSniper()){
+        weapon= new FireWeapon(fireWeaponType::gun);
+        range=weapon->getRange();
+        speed.x=0.8;
+        speed.y=0.4;
+        walkSpeed=0.25;
+        strength=strength/2;
+    }
+    else if(isBerserker()){
+        weapon=new ColdWeapon(coldWeaponType::sword);
+        speed.x=1.2;
+        speed.y=0.6;
+        walkSpeed=0.35;
+    }else{
+        weapon=new ColdWeapon(coldWeaponType::knife);
+
+    }
+
     fireBall.setTexture(fireBall_t);
     fireBall.setTextureRect(sf::IntRect(0,0,40,100));
     fireBall.setOrigin(20,50);
@@ -59,34 +81,7 @@ Enemy::Enemy(int hp, int x, int y, int stg, EnemyType type,Behavior behavior): C
 }
 
 void Enemy::move() {
-    int frameCount=0;
-    int x=0,y=0,w=0,l=0;
 
-    switch(category) {
-        case (EnemyType::dragon):
-            speed.x=0.5;
-            speed.y=0.35;
-            x=190;
-            y=200;
-            w=190;
-            l=200;
-            walkSpeed = 0.012;
-            frameCount = 3;
-
-            break;
-
-        case(EnemyType::skeleton):
-            speed.x=0.5;
-            speed.y=0.35;
-            x=64;
-            y=88;
-            w=65;
-            l=65;
-            walkSpeed=0.1;
-            frameCount=9;
-            break;
-
-    }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         walk=1;
             posX += speed.x;
@@ -121,44 +116,11 @@ void Enemy::move() {
     }
     else
         frame=0;
-    sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * x, walk*y, w, l));
+    sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * frameSize.x, walk*frameSize.y,size.x,size.y));
     sprite.setPosition(posX,posY);
-}
+} //control enemy
 
 void Enemy::move(Character& character){
-    int frameCount=0;
-    int x=0,y=0,w=0,l=0;
-
-    if(isBerserker()){
-        speed.x=1.2;
-        speed.y=0.6;
-        walkSpeed=0.35;
-    }
-    else if(isSniper()){
-        speed.x=0.8;
-        speed.y=0.5;
-        walkSpeed=0.25;
-    }
-
-    switch(category) {
-        case (EnemyType::dragon):
-            x=190;
-            y=200;
-            w=190;
-            l=200;
-            frameCount = 3;
-
-
-            break;
-
-        case(EnemyType::skeleton):
-            x=64;
-            y=88;
-            w=65;
-            l=65;
-            frameCount=9;
-            break;
-    }
 
     /*Bresenham Algoritm*/
 
@@ -175,7 +137,6 @@ void Enemy::move(Character& character){
     else s=-1;
 
     if(d>0){
-        //posX+=q*speed.x;
         posY+=s*speed.y;
         if(s>0)
             walk=0;
@@ -192,61 +153,63 @@ void Enemy::move(Character& character){
     frame += walkSpeed;
     if (frame >= frameCount)
         frame = 1;
-    sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * x, walk*y, w, l));
+    sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * frameSize.x, walk*frameSize.y,size.x,size.y));
     sprite.setPosition(posX,posY);
 
     use();
 
-}
+} //automove
 
 bool Enemy::shootingLine(float x, float y){
     int frameCount=9;
     float dx, dy;
-    dx= posX-x;
-    dy= posY-y;
-    if(dx<0.5 && dx>-0.5 ){
-        if(dy>0)
-            walk=2;
-        else
-            walk=0;
-        return true;
-    }
-    if(dy<0.5 && dy>-0.5) {
-        if(dx>0)
-            walk=3;
-        else
-            walk=1;
-        return true;
-    }
+    if(!fight){
+        dx= posX-x;
+        dy= posY-y;
+        if(dx<0.5 && dx>-0.5 ){
+            if(dy>0)
+                walk=2;
+            else
+                walk=0;
+            return true;
+        }
+        if(dy<0.5 && dy>-0.5) {
+            if(dx>0)
+                walk=3;
+            else
+                walk=1;
+            return true;
+        }
 
-    if(std::abs(dx)<std::abs(dy)){
-        if(dx<0) {
-            walk = 1;
-            posX+=speed.x;
+        if(std::abs(dx)<std::abs(dy)){
+            if(dx<0) {
+                walk = 1;
+                posX+=speed.x;
+            }
+            else {
+                walk = 3;
+                posX-=speed.x;
+            }
+        } else{
+            if(dy<0) {
+                walk = 0;
+                posY+=speed.y;
+            }
+            else {
+                walk = 2;
+                posY-=speed.y;
+            }
         }
-        else {
-            walk = 3;
-            posX-=speed.x;
-        }
-    } else{
-        if(dy<0) {
-            walk = 0;
-            posY+=speed.y;
-        }
-        else {
-            walk = 2;
-            posY-=speed.y;
-        }
-    }
 
-    frame += walkSpeed;
-    if (frame >= frameCount)
-        frame = 1;
-    sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * 64, walk*88, 65, 65));//TODO make it better
-    sprite.setPosition(posX,posY);
+        frame += walkSpeed;
+        if (frame >= frameCount)
+            frame = 1;
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(frame) * frameSize.x, walk*frameSize.y,size.x,size.y));
+        sprite.setPosition(posX,posY);
+    }
     return false;
 
-}
+} //find shooting line
 
 void Enemy::attack(Character& character){
     float attackSpeed;
@@ -254,38 +217,52 @@ void Enemy::attack(Character& character){
     if (isSniper()){
         attackSpeed=0.1;
         if (shootingLine(character.getPosX(),character.getPosY()))
+
             if(!fight) {
                 weapon->startAttack(getPosition(),walk);
+                if (walk == 0)
+                    fireBall.setRotation(180);
+                else if (walk == 1)
+                    fireBall.setRotation(90);
+                else if (walk == 2)
+                    fireBall.setRotation(0);
+                else if (walk == 3)
+                    fireBall.setRotation(270);
+
                 fireBall.setPosition(getPosition());
                 fight = true;
             }
+
         use();
+
     }
     else {
         attackSpeed=0.25;
-        if(!fight)
+        if(!fight){
+            weapon->startAttack(getPosition(),walk);
             fight=true;
+        }
     }
 
-    if (attackFrame >= 5) {
-        fight = false;
+    if (attackFrame >= 5){
         attackFrame = 1;
+        if(!isSniper())
+            fight=false;
     }
     if(fight) {
         attackFrame += attackSpeed;
-        sprite.setTextureRect(sf::IntRect(static_cast<int>(attackFrame) * 64, walk * 88 + 88 * 4, 65, 65));
+        sprite.setTextureRect(sf::IntRect(static_cast<int>(attackFrame) * frameSize.x, walk*frameSize.y+4*frameSize.y,size.x,size.y));
 
     }
-}
-
-
-void Enemy::Render(Window &l_window) {
-    isRender=true;
-    l_window.Draw(sprite);
-    if(isSniper()&&fight)
-        l_window.Draw(fireBall);
 }
 
 sf::Vector2f Enemy::getFeetPosition() {
     return {posX, posY+20};
+}
+
+void Enemy::Render(sf::RenderWindow &l_window) {
+    isRender=true;
+    l_window.draw(sprite);
+    if(isSniper()&&fight)
+        l_window.draw(fireBall);
 }
