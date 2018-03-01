@@ -27,6 +27,13 @@ private:
 
 public:
     explicit FireWeapon(fireWeaponType t);
+    ~FireWeapon() override{
+        delete bullet;
+        for(int i=0;i<shotBullets.size();i++) {
+            delete shotBullets[i];
+            shotBullets.erase(i + shotBullets.cbegin());
+        }
+    }
     int startAttack(sf::Vector2f detPosition, int direction) override;
     void use() override;
     FireWeapon* clone() override;
