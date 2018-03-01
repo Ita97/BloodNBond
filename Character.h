@@ -13,25 +13,25 @@ class Character {
 public:
     Character(const Character& original);
     explicit Character(int h, int x=0, int y=0, Weapon* w= nullptr):
-            hp(h),posX(x),posY(y), weapon(w){
+            healtPoint(h),posX(x),posY(y), weapon(w){
         isRender=false;
     }
 
-    virtual ~Character()= default;
-
     virtual void move()=0;
 
-    virtual void Render(Window& l_window)=0;
+    virtual void Render(sf::RenderWindow& l_window)=0;
 
     int getHp(){
-        return hp;
-    }
-    void heal(int value){
-        Character::hp+=value;
+        return healtPoint;
     }
 
+
     void damage(int value){
-        Character::hp-=value;
+        if(value>0) {
+            Character::healtPoint -= value;
+            if(healtPoint<0)
+                healtPoint=0;
+        }
     }
 
     float getPosX(){
@@ -69,10 +69,14 @@ public:
         return walkingArea;
     }
     sf::Vector2f getAttackRange(){
-        return weapon->getCollisionArea();
+        if(weapon!= nullptr)
+            return weapon->getCollisionArea();
+        return  collisionArea;
     }
     sf::Vector2f getAttackPosition(){
-        return weapon->getPosition();
+        if(weapon!= nullptr)
+            return weapon->getPosition();
+        return getPosition();
     }
     virtual sf::Vector2f getFeetPosition()=0;
     void resetRender(){
@@ -81,20 +85,38 @@ public:
     bool getRender(){
         return isRender;
     }
+
+    bool isFighting() {
+        return fight;
+    }
+
+    bool ready(){
+        if(weapon!= nullptr)
+            return weapon->isReady();
+        return fight;
+    }
+
+    void hit(){
+        if(weapon!= nullptr)
+            weapon->disable();
+    }
+
 protected:
     sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f collisionArea;
     sf::Vector2f walkingArea;
-    int hp;
+    int healtPoint;
     float frame;
     float posX, posY;
     Weapon* weapon;
     int walk;
     bool isRender;
+    bool fight;
 
 
 };
+
 
 
 #endif //BLOODBOND_CHARACTER_H
