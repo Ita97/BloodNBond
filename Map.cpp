@@ -26,6 +26,8 @@ void Map::create() {
             //set obstacles
             insertObstacle(1,1,ObstacleType::tree);
             insertObstacle(3,2,ObstacleType::tree,2);
+            insertObstacle(2,2,ObstacleType::box);
+            obstacle->setAction("You got 'Old Sword'.\nYou got 'Thorium Conyxa'.\nYou got 'Oxygen Conyxa'.");
 
             break;
 
@@ -98,8 +100,9 @@ void Map::create() {
             //set obstacles
             insertObstacle(1,1,ObstacleType::deadTree);
             insertObstacle(3,2,ObstacleType::deadTree,2);
-            insertObstacle(3,0,ObstacleType::deadTree,1);
             insertObstacle(0,2,ObstacleType::grave);
+            insertObstacle(2,0,ObstacleType::box);
+            obstacle->setAction("You got 'Skeleton Key'.\nYou got 'Revolver'.");
 
             break;
     }
@@ -113,15 +116,16 @@ void Map::update() {
     for(auto i:obsVector){
         if(i->isUnlockable()&&i->isOpen()) {
             sf::Vector2i tile=getTile(i->getPosition());
-            insertObstacle(tile.x,tile.y,i->getType(),1);
+            ObstacleType type=i->getType();
             obsVector.erase(pos);
+            insertObstacle(tile.x,tile.y,type,1);
         }
          pos++;
     }
 }
 
 
-void Map::Render(Window &window) {
+void Map::Render(sf::RenderWindow &window) {
     for(auto i:tilesVector)
         i->Render(window);
 }
