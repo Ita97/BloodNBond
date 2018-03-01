@@ -5,11 +5,10 @@
 #ifndef BLOODBOND_OBSTACLE_H
 #define BLOODBOND_OBSTACLE_H
 
-
 #include <SFML/Graphics.hpp>
 #include "Key.h"
 
-enum class ObstacleType{deadTree, tree, grave, forniture, woodpile, building, null};
+enum class ObstacleType{deadTree, tree, grave, forniture, woodpile, building, box, null};
 
 class Obstacle {
 private:
@@ -17,6 +16,7 @@ private:
     sf::Vector2f area,collisionArea;
     sf::Texture texture;
     sf::Sprite sprite;
+    std::string action;
     ObstacleType type;
     keyType lock;
     bool unlockable,open;
@@ -34,7 +34,7 @@ public:
         this->position=position;
         sprite.setPosition(position);
     }
-    void Render(Window& window);
+    void Render(sf::RenderWindow& window);
 
     sf::Vector2f getCollisionArea(){
         return collisionArea;
@@ -57,7 +57,13 @@ public:
     bool isOpen(){
         return open;
     }
+    std::string getAction(){
+        if(open)
+            return action;
+        return "";
+    }
+    void setAction(std::string string){
+        action=string;
+    }
 };
-
-
 #endif //BLOODBOND_OBSTACLE_H
