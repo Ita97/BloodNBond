@@ -6,7 +6,6 @@
 #define BLOODBOND_MAP_H
 
 #include "Tile.h"
-#include "Window.h"
 #include "Obstacle.h"
 
 enum class MapType{courtyard,frontyard, mansion, cemetery};
@@ -22,11 +21,12 @@ private:
     std::vector<Obstacle*> obsVector;
     sf::Texture texture;
     bool visit;
+    
 public:
     Map(MapType mapType):type(mapType),tileSize(256,153.33),pos(480,240),visit(false){}
     ~Map(){}
     void create();
-    void Render(Window& window);
+    void Render(sf::RenderWindow& window);
     void update();
     sf::Vector2f getSize(){
         return {width*tile->getSize().x,lenght*tile->getSize().y};
@@ -65,7 +65,11 @@ public:
     sf::Vector2f getTilePosition(int x, int y){
         return tilesVector[x+y*width]->getPosition();
     }
+    void reset(){
+        visit=false;
+    }
 };
+
 
 
 #endif //BLOODBOND_MAP_H
