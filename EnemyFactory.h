@@ -12,7 +12,6 @@ class EnemyFactory {
 private:
     EnemyType factoryType;
     level factoryPower;
-
     sf::Vector2i factoryPosition;
 
 public:
