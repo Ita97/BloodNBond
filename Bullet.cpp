@@ -35,7 +35,7 @@ void Bullet::fire(float speed) {
 }
 
 
-void Bullet::Render(Window& l_window){
+void Bullet::Render(sf::RenderWindow& l_window){
 
-    l_window.Draw(bullet);
+    l_window.draw(bullet);
 }
