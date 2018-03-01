@@ -16,6 +16,7 @@ private:
     sf::Vector2f position;
 public:
     explicit ColdWeapon(coldWeaponType t);
+    ~ColdWeapon() override = default;
     int startAttack(sf::Vector2f detPosition, int direction) override;
     void use() override;
     ColdWeapon* clone() override;
