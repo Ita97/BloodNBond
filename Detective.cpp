@@ -1,14 +1,20 @@
 //
 // Created by ita on 14/09/17.
 //
+//
+// Created by ita on 14/09/17.
+//
 bool isHold=false;
 #include <iostream>
 #include "Detective.h"
 
 
 
-Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y, Weapon* w):
-        name(name), Character(h, x, y, w), sanityPoint(sp), abilityPoint(ap){
+Detective::Detective(const std::string& name,int h, int sp, int x, int y, Weapon* w):
+        name(name), Character(h, x, y, w), sanityPoint(sp){
+    level=0;
+    maxHP=h;
+    maxSP=sp;
     key=keyType::null;
     notebook.setWindowSize(sf::Vector2f(30, 100),780);
     notebook.setName(" Notebook");
@@ -16,8 +22,7 @@ Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y
     keychain.setName("  Keychain");
     medikit.setWindowSize(sf::Vector2f(90, 100),840);
     medikit.setName(" Medikit");
-    torch=false;
-    texture.loadFromFile("/home/ita/CLionProjects/BloodBond/texture/detective/detective.png");
+    texture.loadFromFile("./texture/detective/detective.png");
     texture.setSmooth(true);
     if(weapon== nullptr)
         sprite.setTexture(texture);
@@ -30,16 +35,46 @@ Detective::Detective(const std::string& name,int h, int sp, int ap, int x, int y
     walk=0;
     attackFrame=0;
     fight=false;
-    collisionArea=sf::Vector2f(30,50);
+    collisionArea=sf::Vector2f(40,50);
     walkingArea=sf::Vector2f(30,30);
+    state_txt.loadFromFile("./texture/detective/state_bar.png");
+    state_bar.setTexture(state_txt);
+    state_bar.scale(0.6,0.6);
+    state_bar.setPosition(0,0);
+    HP.setPosition(70,25);
+    HP.setSize(sf::Vector2f(115,15));
+    HP.setFillColor(sf::Color(162,0,37));//bordeaux
+    SP.setPosition(70,45);
+    SP.setSize(sf::Vector2f(115,15));
+    SP.setFillColor(sf::Color(139,25,155));//purple
+
+    void_star.loadFromFile("./texture/detective/void_star.png");
+    void_star.setSmooth(true);
+    blue_star.loadFromFile("./texture/detective/blue_star.png");
+    blue_star.setSmooth(true);
+    red_star.loadFromFile("./texture/detective/red_star.png");
+    yellow_star.loadFromFile("./texture/detective/yellow_star.png");
+    yellow_star.setSmooth(true);
+    star1.setTexture(void_star);
+    star1.setOrigin(void_star.getSize().x/2,void_star.getSize().y/2);
+    star1.setScale(0.04,0.04);
+    star1.setPosition(740,50);
+    star2.setTexture(void_star);
+    star2.setOrigin(star1.getOrigin());
+    star2.setScale(0.04,0.04);
+    star2.setPosition(820,50);
+    star3.setTexture(void_star);
+    star3.setOrigin(star1.getOrigin());
+    star3.setScale(0.04,0.04);
+    star3.setPosition(900,50);
 }
 
 
 void Detective::move() {
 
-    float walkSpeed=0.15;
+    float walkSpeed=0.16;
     int frameCount=9;
-    float speedX=1, speedY=0.8;
+    float speedX=1.2, speedY=1;
     int x=129, y=183, w=120, l=170;
 
 
@@ -113,7 +148,7 @@ void Detective::attack() {
     }
 }
 
-void Detective::use(Window& window) {
+void Detective::use(sf::RenderWindow& window) { //todo metti tutto in handleInput()
     //interazioni con le inventories mediante mouse e tastiera
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)){
         if(!isHold) {
@@ -156,13 +191,13 @@ void Detective::use(Window& window) {
     else if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
         if(!isHold){
             if(weapon->checkCollision(medikit.getPosition(),medikit.getCollisionArea(),
-                                      sf::Vector2f(sf::Mouse::getPosition(window.getWindow()).x,sf::Mouse::getPosition(window.getWindow()).y))){
+                                      sf::Vector2f(sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y))){
                 if (!medikit.isOpen()&&!keychain.isOpen()&&!notebook.isOpen())
                     openMedikit();
                 else
                     closeMedikit();
             }else if(weapon->checkCollision(keychain.getPosition(),keychain.getCollisionArea(),
-                                            sf::Vector2f(sf::Mouse::getPosition(window.getWindow()).x,sf::Mouse::getPosition(window.getWindow()).y))){
+                                            sf::Vector2f(sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y))){
                     if (!keychain.isOpen()&&!notebook.isOpen()) {
                         openKeychain();
                         closeNotebook();
@@ -171,7 +206,7 @@ void Detective::use(Window& window) {
                     else
                         closeKeychain();
             }else if(weapon->checkCollision(notebook.getPosition(),notebook.getCollisionArea(),
-                                            sf::Vector2f(sf::Mouse::getPosition(window.getWindow()).x,sf::Mouse::getPosition(window.getWindow()).y))){
+                                            sf::Vector2f(sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y))){
                 if (!notebook.isOpen()) {
                     openNotebook();
                     closeMedikit();
@@ -181,17 +216,17 @@ void Detective::use(Window& window) {
                     closeNotebook();
             }else {
 
-                medikit.SelectObject(sf::Mouse::getPosition(window.getWindow()));
+                medikit.SelectObject(sf::Mouse::getPosition(window));
                 if(medikit.objectIsUsed()){
                     useMedicine(*medikit.getObject());
                     medikit.throwElement(medikit.getObjectPosition());
                 }
-                notebook.SelectObject(sf::Mouse::getPosition(window.getWindow()));
+                notebook.SelectObject(sf::Mouse::getPosition(window));
                 if(notebook.objectIsUsed()){
                     notebook.getObject()->open();
                     notebook.update();
                 }
-                keychain.SelectObject(sf::Mouse::getPosition(window.getWindow()));
+                keychain.SelectObject(sf::Mouse::getPosition(window));
                 if(keychain.objectIsUsed()) {
                     key=keychain.getObject()->getMaterial();
                 }
@@ -254,25 +289,30 @@ void Detective::getKey(Key &key) {
 
 
 void Detective::interact(Obstacle *obs) {
-    if(obs->isUnlockable()){
-        obs->unlock(key);
-    }
+    obs->unlock(key);
 }
 
 //Rendering
 
-void Detective::Render(Window& l_window){
+void Detective::Render(sf::RenderWindow& l_window){
     isRender=true;
-    l_window.Draw(sprite);
+    l_window.draw(sprite);
     if(weapon!=nullptr)
         weapon->Render(l_window);
 }
 
-void Detective::RenderInventory(Window& l_window){
+void Detective::RenderInventory(sf::RenderWindow& l_window){
+    l_window.draw(HP);
+    l_window.draw(SP);
+    l_window.draw(state_bar);
+    if(weapon!=nullptr)
+        l_window.draw(weapon->getSprite());
     medikit.Render(l_window);
     keychain.Render(l_window);
     notebook.Render(l_window);
-
+    l_window.draw(star1);
+    l_window.draw(star2);
+    l_window.draw(star3);
 }
 
 sf::Vector2f Detective::getFeetPosition() {
