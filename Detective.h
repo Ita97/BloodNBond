@@ -10,7 +10,6 @@
 #include "Enemy.h"
 #include "Inventory.h"
 #include "Medicine.h"
-#include "Window.h"
 #include "Key.h"
 #include "Message.h"
 #include "Obstacle.h"
@@ -20,7 +19,7 @@
 
 class Detective: virtual public Character, virtual public Observer {
 public:
-    Detective(const std::string &det, int h, int sp, int x, int y, Weapon *w);
+    explicit Detective(const std::string &det="", int h=10, int sp=10, int x=0, int y=0, Weapon *w=nullptr);
 
     Detective(const Detective &original);
 
@@ -30,7 +29,7 @@ public:
 
     void attack();
 
-    void use(sf::RenderWindow &window);
+    void useInventory(sf::RenderWindow &window);
 
     void reload() {
         key = keyType::null;
@@ -70,30 +69,47 @@ public:
 
     void openMedikit() {
         medikit.openWindow();
+        closeKeychain();
+        closeNotebook();
     }
 
     void closeMedikit() {
         medikit.closeWindow();
+    }
+    Inventory<Medicine>& getMedikit(){
+        return medikit;
     }
 
     void getMessage(Message &note);
 
     void openNotebook() {
         notebook.openWindow();
+        closeKeychain();
+        closeMedikit();
     }
 
     void closeNotebook() {
         notebook.closeWindow();
     }
 
+    Inventory<Message>& getNotebook(){
+        return notebook;
+    }
+
     void getKey(Key &key);
 
     void openKeychain() {
         keychain.openWindow();
+        closeMedikit();
+        closeNotebook();
     };
 
     void closeKeychain() {
         keychain.closeWindow();
+    }
+
+    Inventory<Key>& getKeychain(){
+        return keychain;
     }
 
     void useMedicine(Medicine &medication);
@@ -158,6 +174,10 @@ public:
     }
     void attach() override{}
     void detach() override{}
+
+    int getLevel(){
+        return level;
+    }
 
 private:
     int level;
