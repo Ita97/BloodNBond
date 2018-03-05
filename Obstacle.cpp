@@ -56,7 +56,6 @@ Obstacle::Obstacle(ObstacleType type,int select):type(type){
             break;
 
         case ObstacleType ::building:
-
             if(select==0){//mansion_close
                 unlockable=true;
                 lock=keyType ::skeleton;
@@ -81,16 +80,16 @@ Obstacle::Obstacle(ObstacleType type,int select):type(type){
             if(select==0){//close
                 unlockable=true;
                 texture.loadFromFile("./texture/map/obstacle/box.png");
-                sprite.setTextureRect(sf::IntRect(0,0,100,100));
-                sprite.setOrigin(60,50);
-                area=sf::Vector2f(40,30);
+                sprite.setTextureRect(sf::IntRect(0,0,110,100));
+                sprite.setOrigin(65,46);
+                area=sf::Vector2f(60,30);
                 collisionArea=sf::Vector2f(65,50);
             }else{//open
                 open=true;
                 texture.loadFromFile("./texture/map/obstacle/box.png");
-                sprite.setTextureRect(sf::IntRect(118,0,100,100));
-                sprite.setOrigin(60,50);
-                area=sf::Vector2f(40,30);
+                sprite.setTextureRect(sf::IntRect(123,0,110,100));
+                sprite.setOrigin(65,46);
+                area=sf::Vector2f(60,30);
                 collisionArea=sf::Vector2f(65,50);
             }
 
