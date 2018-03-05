@@ -43,7 +43,7 @@ Detective::Detective(const std::string& name,int h, int sp, int x, int y, Weapon
     state_bar.setPosition(0,0);
     HP.setPosition(70,25);
     HP.setSize(sf::Vector2f(115,15));
-    HP.setFillColor(sf::Color(162,0,37));//bordeaux
+    HP.setFillColor(sf::Color(220,20,60));//cremisi, mentre bordeaux(163,0,37)
     SP.setPosition(70,45);
     SP.setSize(sf::Vector2f(115,15));
     SP.setFillColor(sf::Color(139,25,155));//purple
@@ -72,9 +72,9 @@ Detective::Detective(const std::string& name,int h, int sp, int x, int y, Weapon
 
 void Detective::move() {
 
-    float walkSpeed=0.16;
+    float walkSpeed=0.17;
     int frameCount=9;
-    float speedX=1.2, speedY=1;
+    float speedX=1.3, speedY=1;
     int x=129, y=183, w=120, l=170;
 
 
@@ -127,12 +127,12 @@ void Detective::move() {
 void Detective::attack() {
     sf::Vector2i size(120,170),distance(129,185);
     float attackSpeed=0.15;
-    int frameCount=6;
+    int frameCount=5;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
         fight = true;
     }
     if (weapon != nullptr) {
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+        if(fight&&attackFrame>3&&attackFrame<4)
             weapon->startAttack(getPosition(),walk);
         weapon->use();
         weapon->getTextureDetails(size,distance,frameCount);
@@ -148,98 +148,22 @@ void Detective::attack() {
     }
 }
 
-void Detective::use(sf::RenderWindow& window) { //todo metti tutto in handleInput()
-    //interazioni con le inventories mediante mouse e tastiera
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::M)){
-        if(!isHold) {
-
-            if (!medikit.isOpen()) {
-                openMedikit();
-                closeNotebook();
-                closeKeychain();
-            }
-            else
-                closeMedikit();
+void Detective::useInventory(sf::RenderWindow& window) {
+        medikit.SelectObject(sf::Mouse::getPosition(window));
+        if (medikit.objectIsUsed()){
+            useMedicine(*medikit.getObject());
+            medikit.throwElement(medikit.getObjectPosition());
         }
-        isHold=true;
-    }
-
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
-        if (!isHold) {
-            if (!keychain.isOpen()) {
-                openKeychain();
-                closeNotebook();
-                closeMedikit();
-                }
-            else
-                closeKeychain();
+        notebook.SelectObject(sf::Mouse::getPosition(window));
+        if (notebook.objectIsUsed()){
+            notebook.getObject()->open();
+            notebook.update();
         }
-        isHold=true;
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)){
-        if(!isHold) {
-            if (!notebook.isOpen()) {
-                openNotebook();
-                closeMedikit();
-                closeKeychain();
-            }
-            else
-                closeNotebook();
+        keychain.SelectObject(sf::Mouse::getPosition(window));
+        if (keychain.objectIsUsed()){
+            key = keychain.getObject()->getMaterial();
+            keychain.getObject()->use();
         }
-        isHold=true;
-    }
-    else if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-        if(!isHold){
-            if(weapon->checkCollision(medikit.getPosition(),medikit.getCollisionArea(),
-                                      sf::Vector2f(sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y))){
-                if (!medikit.isOpen()&&!keychain.isOpen()&&!notebook.isOpen())
-                    openMedikit();
-                else
-                    closeMedikit();
-            }else if(weapon->checkCollision(keychain.getPosition(),keychain.getCollisionArea(),
-                                            sf::Vector2f(sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y))){
-                    if (!keychain.isOpen()&&!notebook.isOpen()) {
-                        openKeychain();
-                        closeNotebook();
-                        closeMedikit();
-                    }
-                    else
-                        closeKeychain();
-            }else if(weapon->checkCollision(notebook.getPosition(),notebook.getCollisionArea(),
-                                            sf::Vector2f(sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y))){
-                if (!notebook.isOpen()) {
-                    openNotebook();
-                    closeMedikit();
-                    closeKeychain();
-                }
-                else
-                    closeNotebook();
-            }else {
-
-                medikit.SelectObject(sf::Mouse::getPosition(window));
-                if(medikit.objectIsUsed()){
-                    useMedicine(*medikit.getObject());
-                    medikit.throwElement(medikit.getObjectPosition());
-                }
-                notebook.SelectObject(sf::Mouse::getPosition(window));
-                if(notebook.objectIsUsed()){
-                    notebook.getObject()->open();
-                    notebook.update();
-                }
-                keychain.SelectObject(sf::Mouse::getPosition(window));
-                if(keychain.objectIsUsed()) {
-                    key=keychain.getObject()->getMaterial();
-                }
-
-            }
-        }
-        isHold=true;
-    }
-    else
-        isHold=false;
-
-
-
 }
 
 Detective::Detective(const Detective& original): Character(original){
