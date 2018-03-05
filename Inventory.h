@@ -43,6 +43,10 @@ private:
 public:
     explicit Inventory(const std::string &name = "Vault", std::vector<T> chest = {});
 
+    int getSize(){
+        return elements.size();
+    }
+
     bool displayObjectWindow(int pos){
         if(pos>=elements.size()||pos<0)
             return false;
@@ -82,9 +86,11 @@ public:
         return inventoryIsOpen;
     }
     void setName(const std::string &string);
+
     const sf::Vector2f getCollisionArea(){
         return collisionArea;
     }
+
     const sf::Vector2f getPosition();
     void reset(){
         elements.clear();
@@ -135,8 +141,8 @@ Inventory<T>::Inventory(const std::string &name, std::vector<T> chest)
     WindowMaxSize=0;
 
 
-    collisionArea.x=15;
-    collisionArea.y=50;
+    collisionArea.x=30;
+    collisionArea.y=100;
 }
 
 
@@ -202,12 +208,12 @@ void Inventory<T>::Render(sf::RenderWindow &l_window) {
     l_window.draw(inventoryName);
 
     if(inventoryIsOpen&&scroll<WindowMaxSize)
-        scroll+=10;
+        scroll+=15;
     else if(inventoryIsOpen && scroll>=WindowMaxSize)
         for(auto& i:box)
             l_window.draw(i);
     else if(!inventoryIsOpen&& scroll>windowSize.x)
-        scroll-=7;
+        scroll-=12;
     else if(!inventoryIsOpen&& scroll <=windowSize.x)
         scroll=windowSize.x;
 
@@ -245,18 +251,18 @@ void Inventory<T>::SelectObject(sf::Vector2i mousePosition) {
     if(objectWindowIsOpen) {
         if (isInsideArea(mousePosition, sf::Vector2f(objectWindow.getPosition().x+objectWindow_txt.getSize().x - 10,
                                                      objectWindow.getPosition().y + 10), sf::Vector2f(10, 10))) {
-            closeObjectWindow();    //chiudi finestra quando clikki la 'x'
+            closeObjectWindow();    //chiudi finestra quando fai click sulla 'x'
             object.ptr= nullptr;
         }
-        if(isInsideArea(mousePosition,sf::Vector2f(objectWindow.getPosition().x + objectWindow_txt.getSize().x/4+10,
+        else if(isInsideArea(mousePosition,sf::Vector2f(objectWindow.getPosition().x + objectWindow_txt.getSize().x/4+10,
                                                    objectWindow.getPosition().y + objectWindow_txt.getSize().y-14),sf::Vector2f(26.2,8.3)))
             throwElement(object.position);
 
 
-        if(isInsideArea(mousePosition,sf::Vector2f(objectWindow.getPosition().x + 35,
-                                                   objectWindow.getPosition().y + objectWindow_txt.getSize().y-14),sf::Vector2f(26.2,8.3))) {
-            object.use=true;
-        }
+        else
+            object.use=isInsideArea(mousePosition,
+                                    sf::Vector2f(objectWindow.getPosition().x + 35,
+                                                           objectWindow.getPosition().y + objectWindow_txt.getSize().y-14), sf::Vector2f(26.2,8.3));
     }
 
 }
@@ -272,9 +278,10 @@ void Inventory<T>::setObject(int pos) {
 
 template <typename  T>
 const sf::Vector2f Inventory<T>::getPosition() {
-    float x=inventoryWindow.getPosition().x+inventoryWindow.getSize().x-collisionArea.x;
-    float y=inventoryWindow.getPosition().y+collisionArea.y;
+    float x=inventoryWindow.getPosition().x+inventoryWindow.getSize().x-collisionArea.x/2;
+    float y=inventoryWindow.getPosition().y+collisionArea.y/2;
     return sf::Vector2f(x,y);
 }
+
 
 #endif //BLOODBOND_INVENTORY_H
